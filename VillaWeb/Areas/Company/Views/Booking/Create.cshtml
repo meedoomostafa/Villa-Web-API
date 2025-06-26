@@ -1,0 +1,103 @@
+@model BookingCreateDTO
+
+@{
+    ViewBag.Title = "Create New Booking";
+    Layout = "_Layout";
+}
+
+<div class="content-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header Section -->
+            <div class="text-center mb-4">
+                <div class="hero-badge mb-3">
+                    <i class="fas fa-plus me-2"></i>
+                    <span>New Booking Creation</span>
+                </div>
+                <h2 class="hero-title mb-2">Create New Booking</h2>
+                <p class="hero-subtitle">Add a new villa booking to your management system</p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="card">
+                <div class="card-content p-4">
+                    <form asp-area="Company" asp-controller="Booking" asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="ApplicationUserId" class="form-label">
+                                    <i class="fas fa-user me-2 text-primary"></i>Customer ID
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                    <input asp-for="ApplicationUserId" class="form-control" type="number" min="1" placeholder="Enter customer ID" />
+                                </div>
+                                <span asp-validation-for="ApplicationUserId" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="VillaNumberId" class="form-label">
+                                    <i class="fas fa-building me-2 text-success"></i>Villa Number ID
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                    <input asp-for="VillaNumberId" class="form-control" type="number" min="1" placeholder="Enter villa number ID" />
+                                </div>
+                                <span asp-validation-for="VillaNumberId" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="StartDate" class="form-label">
+                                    <i class="fas fa-calendar-plus me-2 text-info"></i>Check-in Date
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    <input asp-for="StartDate" class="form-control" type="date" />
+                                </div>
+                                <span asp-validation-for="StartDate" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="EndDate" class="form-label">
+                                    <i class="fas fa-calendar-minus me-2 text-warning"></i>Check-out Date
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    <input asp-for="EndDate" class="form-control" type="date" />
+                                </div>
+                                <span asp-validation-for="EndDate" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="TotalPrice" class="form-label">
+                                <i class="fas fa-dollar-sign me-2 text-success"></i>Total Price
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="TotalPrice" class="form-control" type="number" step="0.01" min="0" placeholder="0.00" />
+                            </div>
+                            <span asp-validation-for="TotalPrice" class="text-danger small"></span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2">
+                                <i class="fas fa-arrow-left me-2"></i>Back to List
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4 py-2">
+                                <i class="fas fa-save me-2"></i>Create Booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

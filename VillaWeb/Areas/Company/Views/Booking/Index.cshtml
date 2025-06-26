@@ -1,0 +1,167 @@
+@model List<BookingDTO>
+
+@{
+    ViewBag.Title = "Manage Bookings";
+    Layout = "_Layout";
+}
+
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header Section -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="hero-title mb-2">Booking Management</h2>
+                    <p class="hero-subtitle mb-0">Monitor and manage all villa bookings from one dashboard</p>
+                </div>
+                <div class="hero-features">
+                    <a asp-action="Create" class="btn btn-primary px-4 py-2">
+                        <i class="fas fa-plus me-2"></i>New Booking
+                    </a>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card stat-card">
+                        <div class="card-icon">
+                            <i class="fas fa-check-circle text-success"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="stat-number">@Model?.Count(b => b.Status == VillaWebUtility.SD.BookingStatus.Confirmed)</h3>
+                            <p class="stat-label">Confirmed</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card">
+                        <div class="card-icon">
+                            <i class="fas fa-clock text-warning"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="stat-number">@Model?.Count(b => b.Status == VillaWebUtility.SD.BookingStatus.Pending)</h3>
+                            <p class="stat-label">Pending</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card">
+                        <div class="card-icon">
+                            <i class="fas fa-times-circle text-danger"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="stat-number">@Model?.Count(b => b.Status == VillaWebUtility.SD.BookingStatus.Cancelled)</h3>
+                            <p class="stat-label">Cancelled</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Card -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card stat-card">
+                        <div class="card-icon">
+                            <i class="fas fa-dollar-sign text-primary"></i>
+                        </div>
+                        <div class="card-content text-center">
+                            <h3 class="stat-number">$@Model?.Where(b => b.Status == VillaWebUtility.SD.BookingStatus.Confirmed).Sum(b => b.TotalPrice).ToString("N0")</h3>
+                            <p class="stat-label">Confirmed Revenue</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Card -->
+            <div class="card">
+                <div class="card-content p-4">
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th><i class="fas fa-hashtag me-2"></i>Booking ID</th>
+                                        <th><i class="fas fa-user me-2"></i>Guest Name</th>
+                                        <th><i class="fas fa-building me-2"></i>Villa</th>
+                                        <th><i class="fas fa-calendar-in me-2"></i>Check In</th>
+                                        <th><i class="fas fa-calendar-out me-2"></i>Check Out</th>
+                                        <th><i class="fas fa-dollar-sign me-2"></i>Total Price</th>
+                                        <th><i class="fas fa-info-circle me-2"></i>Status</th>
+                                        <th><i class="fas fa-cog me-2"></i>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var booking in Model)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold text-primary">#@booking.Id</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="brand-icon me-2" style="width: 32px; height: 32px; font-size: 14px;">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                    @booking.UserFullName
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @if (!string.IsNullOrEmpty(booking.VillaImageUrl))
+                                                    {
+                                                        <img src="@booking.VillaImageUrl" alt="Villa" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid var(--primary-color);">
+                                                    }
+                                                    <div>
+                                                        <div class="fw-semibold">@booking.VillaName</div>
+                                                        <small class="text-muted">@booking.VillaRate ⭐</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@booking.StartDate.ToString("MMM dd, yyyy")</td>
+                                            <td>@booking.EndDate.ToString("MMM dd, yyyy")</td>
+                                            <td class="fw-bold text-success">$@booking.TotalPrice.ToString("N2")</td>
+                                            <td>
+                                                <span class="badge 
+                                                    @(booking.Status == VillaWebUtility.SD.BookingStatus.Confirmed ? "bg-success" : 
+                                                      booking.Status == VillaWebUtility.SD.BookingStatus.Pending ? "bg-warning" : 
+                                                      booking.Status == VillaWebUtility.SD.BookingStatus.Cancelled ? "bg-danger" : "bg-secondary")">
+                                                    <i class="fas fa-circle me-1" style="font-size: 8px;"></i>
+                                                    @booking.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Details" asp-route-id="@booking.Id" class="btn btn-outline-info btn-sm" title="View Details">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a asp-action="Edit" asp-route-id="@booking.Id" class="btn btn-outline-primary btn-sm" title="Edit Booking">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a asp-action="Delete" asp-route-id="@booking.Id" class="btn btn-outline-danger btn-sm" title="Delete Booking">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <div class="hero-image-placeholder mb-4" style="width: 120px; height: 120px; margin: 0 auto;">
+                                <i class="fas fa-calendar-times display-3"></i>
+                            </div>
+                            <h4 class="hero-title mb-3">No Bookings Yet</h4>
+                            <p class="hero-subtitle mb-4">Start managing your villa bookings by creating your first booking entry.</p>
+                            <a asp-action="Create" class="btn btn-primary px-4 py-2">
+                                <i class="fas fa-plus me-2"></i>Create First Booking
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

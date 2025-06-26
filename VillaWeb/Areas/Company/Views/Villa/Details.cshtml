@@ -1,0 +1,1176 @@
+@using Newtonsoft.Json
+@model VillaWithVillaNumbersDTO
+
+@{
+    ViewData["Title"] = $"{Model.Name} - Villa Details";
+    ViewData["Description"] = Model.Details;
+    Layout = "_Layout";
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mt-3 mx-3 animate__animated animate__fadeInDown" role="alert">
+        <i class="fa-solid fa-check-circle me-2"></i>
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["BookingErrors"] != null)
+{
+    var errors = JsonConvert.DeserializeObject<List<string>>(TempData["BookingErrors"].ToString()!);
+    foreach (var error in errors)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mt-3 mx-3 animate__animated animate__fadeInDown" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+            @error
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+}
+
+<!-- Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="container mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-area="Customer" asp-controller="CustomerHome" asp-action="Index" class="text-decoration-none">
+                <i class="fas fa-home me-1"></i>Home
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-area="Company" asp-controller="Villa" asp-action="Index" class="text-decoration-none">Villas</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+    </ol>
+</nav>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="container">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+<div class="container py-4">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8 mb-4">
+            <!-- Villa Header -->
+            <div class="villa-header mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h1 class="display-5 fw-bold text-primary mb-2">@Model.Name</h1>
+                        <div class="villa-rating d-flex align-items-center mb-2">
+                            <div class="stars text-warning me-2">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span class="text-muted">(5.0) • Premium Villa</span>
+                        </div>
+                        <div class="villa-meta text-muted">
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            <span>Luxury Villa Collection</span>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="price-display">
+                            <span class="h2 text-primary fw-bold">@Model.Rate.ToString("C")</span>
+                            <small class="text-muted">/night</small>
+                        </div>
+                        <div class="availability-status">
+                            <span class="badge bg-success">
+                                <i class="fas fa-check-circle me-1"></i>Available
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Villa Image Gallery -->
+            <div class="villa-gallery mb-4">
+                <div class="row g-2">
+                    <div class="col-12">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <div class="main-image position-relative overflow-hidden rounded-3">
+                                <img src="@Model.ImageUrl" class="img-fluid w-100" alt="@Model.Name" 
+                                     style="height: 400px; object-fit: cover;" 
+                                     data-bs-toggle="modal" data-bs-target="#imageModal" />
+                                <div class="position-absolute bottom-0 end-0 p-3">
+                                    <button class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#imageModal">
+                                        <i class="fas fa-expand me-1"></i>View Gallery
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="placeholder-gallery d-flex align-items-center justify-content-center rounded-3" 
+                                 style="height: 400px; background: linear-gradient(45deg, #f8f9fa, #e9ecef);">
+                                <div class="text-center text-muted">
+                                    <i class="fas fa-camera display-3 mb-3"></i>
+                                    <h4>Image Gallery Coming Soon</h4>
+                                    <p>Professional photos will be available shortly</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Villa Features -->
+            <div class="villa-features mb-4">
+                <h3 class="h4 fw-bold mb-3">
+                    <i class="fas fa-star text-warning me-2"></i>Villa Features
+                </h3>
+                <div class="row g-3">
+                    <div class="col-md-3 col-6">
+                        <div class="feature-card text-center p-3 bg-light rounded-3 h-100">
+                            <i class="fas fa-users text-primary display-6 mb-2"></i>
+                            <h5 class="fw-bold">@Model.Occupancy</h5>
+                            <small class="text-muted">Max Guests</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="feature-card text-center p-3 bg-light rounded-3 h-100">
+                            <i class="fas fa-ruler-combined text-primary display-6 mb-2"></i>
+                            <h5 class="fw-bold">@Model.Sqft</h5>
+                            <small class="text-muted">Square Feet</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="feature-card text-center p-3 bg-light rounded-3 h-100">
+                            <i class="fas fa-bed text-primary display-6 mb-2"></i>
+                            <h5 class="fw-bold">3-4</h5>
+                            <small class="text-muted">Bedrooms</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="feature-card text-center p-3 bg-light rounded-3 h-100">
+                            <i class="fas fa-bath text-primary display-6 mb-2"></i>
+                            <h5 class="fw-bold">2-3</h5>
+                            <small class="text-muted">Bathrooms</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Villa Description -->
+            <div class="villa-description mb-4">
+                <h3 class="h4 fw-bold mb-3">
+                    <i class="fas fa-info-circle text-primary me-2"></i>About This Villa
+                </h3>
+                <div class="description-content bg-light p-4 rounded-3">
+                    <p class="mb-0 lh-lg">@Model.Details</p>
+                </div>
+            </div>
+
+            <!-- Amenities -->
+            @if (!string.IsNullOrEmpty(Model.Amenity))
+            {
+                <div class="villa-amenities mb-4">
+                    <h3 class="h4 fw-bold mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>Amenities & Services
+                    </h3>
+                    <div class="amenities-grid">
+                        @{
+                            var amenitiesList = Model.Amenity.Split(',').Select(a => a.Trim()).ToList();
+                            var amenityIcons = new Dictionary<string, string>
+                            {
+                                {"wifi", "fas fa-wifi"},
+                                {"pool", "fas fa-swimming-pool"},
+                                {"parking", "fas fa-parking"},
+                                {"kitchen", "fas fa-utensils"},
+                                {"air conditioning", "fas fa-snowflake"},
+                                {"tv", "fas fa-tv"},
+                                {"gym", "fas fa-dumbbell"},
+                                {"spa", "fas fa-spa"},
+                                {"beach", "fas fa-umbrella-beach"},
+                                {"garden", "fas fa-seedling"}
+                            };
+                        }
+                        <div class="row g-3">
+                            @foreach (var amenity in amenitiesList)
+                            {
+                                var icon = "fas fa-check";
+                                var lowerAmenity = amenity.ToLower();
+                                foreach (var pair in amenityIcons)
+                                {
+                                    if (lowerAmenity.Contains(pair.Key))
+                                    {
+                                        icon = pair.Value;
+                                        break;
+                                    }
+                                }
+                                <div class="col-md-6">
+                                    <div class="amenity-item d-flex align-items-center p-2">
+                                        <i class="@icon text-primary me-3"></i>
+                                        <span>@amenity</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Location & Nearby -->
+            <div class="villa-location mb-4">
+                <h3 class="h4 fw-bold mb-3">
+                    <i class="fas fa-map-marker-alt text-danger me-2"></i>Location & Nearby
+                </h3>
+                <div class="location-content bg-light p-4 rounded-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="fw-semibold mb-3">Nearby Attractions</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-map-pin text-primary me-2"></i>
+                                    Beach Access - 5 min walk
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-map-pin text-primary me-2"></i>
+                                    City Center - 15 min drive
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-map-pin text-primary me-2"></i>
+                                    Airport - 30 min drive
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="fw-semibold mb-3">Local Services</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-shopping-cart text-primary me-2"></i>
+                                    Grocery Store - 10 min walk
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-utensils text-primary me-2"></i>
+                                    Fine Dining - 5 min walk
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-hospital text-primary me-2"></i>
+                                    Medical Center - 20 min drive
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Sidebar -->
+        <div class="col-lg-4">
+            <div class="booking-card" style="position: sticky; top: 100px;">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h4 mb-0 fw-bold">@Model.Rate.ToString("C")</span>
+                            <small>/night</small>
+                        </div>
+                        <div class="mt-1">
+                            <small><i class="fas fa-tag me-1"></i>Best Rate Guaranteed</small>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Enhanced Booking Form -->
+                        <form asp-area="Company" asp-controller="Booking" asp-action="Create" method="post" class="needs-validation" novalidate id="bookingForm">
+                            <!-- Hidden fields for the DTO -->
+                            <input type="hidden" name="ApplicationUserId" value="1" id="hiddenUserId" />
+                            <input type="hidden" name="TotalPrice" value="0" id="hiddenTotalPrice" />
+                            <input type="hidden" name="returnUrl" value="@TempData["ReturnUrl"]" id="returnUrl" />
+                            
+                            <!-- Villa Number Selection -->
+                            <div class="mb-3">
+                                <label for="villaNumber" class="form-label fw-semibold">
+                                    <i class="fas fa-hashtag me-1 text-primary"></i>Villa Number *
+                                </label>
+                                <select asp-items="Model.VillaNumbersSelectList" class="form-select" id="villaNumber" name="VillaNumberId" required>
+                                    <option value="">Select Villa Number</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select a villa number.
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-6">
+                                    <label for="startDate" class="form-label fw-semibold">
+                                        <i class="fas fa-calendar-plus me-1 text-primary"></i>Check-in *
+                                    </label>
+                                    <input type="date" class="form-control" id="startDate" name="StartDate" required>
+                                    <div class="invalid-feedback">
+                                        Check-in date is required.
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label for="endDate" class="form-label fw-semibold">
+                                        <i class="fas fa-calendar-minus me-1 text-primary"></i>Check-out *
+                                    </label>
+                                    <input type="date" class="form-control" id="endDate" name="EndDate" required>
+                                    <div class="invalid-feedback">
+                                        Check-out date is required.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Guest Count (for display only, not part of DTO) -->
+                            <div class="mb-3">
+                                <label for="guests" class="form-label fw-semibold">
+                                    <i class="fas fa-users me-1 text-primary"></i>Guests
+                                </label>
+                                <select class="form-select" id="guests">
+                                    @for (int i = 1; i <= Model.Occupancy; i++)
+                                    {
+                                        <option value="@i">@i @(i == 1 ? "Guest" : "Guests")</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="price-breakdown mb-3 bg-light p-3 rounded">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Base rate (per night)</span>
+                                    <span id="baseRate">@Model.Rate.ToString("C")</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Number of nights</span>
+                                    <span id="numberOfNights">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2 text-muted">
+                                    <span>Service fee (10%)</span>
+                                    <span id="serviceFee">$0</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2 text-muted">
+                                    <span>Taxes (12%)</span>
+                                    <span id="taxes">$0</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between fw-bold h5">
+                                    <span>Total</span>
+                                    <span id="totalPrice">$0</span>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="submit" class="btn btn-primary btn-lg" id="reserveBtn" disabled>
+                                    <i class="fas fa-calendar-check me-2"></i>Reserve Now
+                                </button>
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#inquiryModal">
+                                    <i class="fas fa-envelope me-2"></i>Send Inquiry
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="booking-features">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-shield-check text-success me-2"></i>
+                                <small>Free cancellation up to 24 hours</small>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-clock text-primary me-2"></i>
+                                <small>Instant booking confirmation</small>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-headset text-info me-2"></i>
+                                <small>24/7 customer support</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Card -->
+                <div class="card shadow-sm border-0 mt-4">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-phone-alt display-6 text-primary mb-2"></i>
+                            <h5 class="fw-bold">Need Help?</h5>
+                            <p class="text-muted mb-3">Our villa specialists are here to assist you</p>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <a href="tel:+1234567890" class="btn btn-outline-primary">
+                                <i class="fas fa-phone me-2"></i>Call Now
+                            </a>
+                            <a href="mailto:villas@villaweb.com" class="btn btn-outline-secondary">
+                                <i class="fas fa-envelope me-2"></i>Email Us
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">@Model.Name - Gallery</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" class="img-fluid w-100" alt="@Model.Name" />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inquiry Modal -->
+<div class="modal fade" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inquiryModalLabel">
+                    <i class="fas fa-envelope me-2"></i>Send Inquiry - @Model.Name
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="inquiryForm">
+                    <div class="mb-3">
+                        <label for="inquiryName" class="form-label">Your Name *</label>
+                        <input type="text" class="form-control" id="inquiryName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inquiryEmail" class="form-label">Email Address *</label>
+                        <input type="email" class="form-control" id="inquiryEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inquiryPhone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="inquiryPhone">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inquiryMessage" class="form-label">Message *</label>
+                        <textarea class="form-control" id="inquiryMessage" rows="4" 
+                                  placeholder="Please let us know your preferred dates, number of guests, and any special requirements..." required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="inquiryForm" class="btn btn-primary">
+                    <i class="fas fa-paper-plane me-2"></i>Send Inquiry
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Back to Villas Button -->
+<div class="container mb-4">
+    <div class="text-center">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i>Back to All Villas
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            const baseRate = @Model.Rate;
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            $('#startDate').attr('min', today);
+            $('#endDate').attr('min', today);
+            
+            // Calculate price and validate form on date change
+            $('#startDate, #endDate, #villaNumber').on('change', function() {
+                calculatePrice();
+                updateEndDateMin();
+                validateForm();
+            });
+            
+            function updateEndDateMin() {
+                const startDate = $('#startDate').val();
+                if (startDate) {
+                    const minEndDate = new Date(startDate);
+                    minEndDate.setDate(minEndDate.getDate() + 1);
+                    $('#endDate').attr('min', minEndDate.toISOString().split('T')[0]);
+                }
+            }
+            
+            function calculatePrice() {
+                const startDate = new Date($('#startDate').val());
+                const endDate = new Date($('#endDate').val());
+                
+                if (startDate && endDate && endDate > startDate) {
+                    const timeDiff = endDate.getTime() - startDate.getTime();
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    
+                    const subtotal = baseRate * daysDiff;
+                    const serviceFee = subtotal * 0.1; // 10% service fee
+                    const taxes = subtotal * 0.12; // 12% taxes
+                    const total = subtotal + serviceFee + taxes;
+                    
+                    $('#numberOfNights').text(daysDiff + (daysDiff === 1 ? ' night' : ' nights'));
+                    $('#serviceFee').text('$' + serviceFee.toFixed(2));
+                    $('#taxes').text('$' + taxes.toFixed(2));
+                    $('#totalPrice').text('$' + total.toFixed(2));
+                    
+                    // Update hidden field
+                    $('#hiddenTotalPrice').val(total.toFixed(2));
+                    
+                    return total;
+                } else {
+                    $('#numberOfNights').text('-');
+                    $('#serviceFee').text('$0');
+                    $('#taxes').text('$0');
+                    $('#totalPrice').text('$0');
+                    $('#hiddenTotalPrice').val('0');
+                    return 0;
+                }
+            }
+            
+            function validateForm() {
+                const startDate = $('#startDate').val();
+                const endDate = $('#endDate').val();
+                const villaNumber = $('#villaNumber').val();
+                
+                const isValid = startDate && endDate && villaNumber && new Date(endDate) > new Date(startDate);
+                $('#reserveBtn').prop('disabled', !isValid);
+                
+                return isValid;
+            }
+            
+            // Form submission validation
+            $('#bookingForm').on('submit', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (!validateForm()) {
+                    $(this).addClass('was-validated');
+                    return false;
+                }
+                
+                const totalPrice = calculatePrice();
+                if (totalPrice <= 0) {
+                    alert('Please select valid dates to calculate the total price.');
+                    return false;
+                }
+                
+                // If all validations pass, submit the form
+                this.submit();
+            });
+            
+            // Initialize tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+            
+            // Initial validation check
+            validateForm();
+        });
+    </script>
+}
+
+@* @model VillaDTO *@
+@* *@
+@* @{ *@
+@*     ViewData["Title"] = $"{Model.Name} - Villa Details"; *@
+@*     ViewData["Description"] = Model.Details; *@
+@*     Layout = "_Layout"; *@
+@* } *@
+@* *@
+@* <!-- Breadcrumb Navigation --> *@
+@* <nav aria-label="breadcrumb" class="container mt-3"> *@
+@*     <ol class="breadcrumb"> *@
+@*         <li class="breadcrumb-item"> *@
+@*             <a asp-controller="Home" asp-action="Index" class="text-decoration-none"> *@
+@*                 <i class="fas fa-home me-1"></i>Home *@
+@*             </a> *@
+@*         </li> *@
+@*         <li class="breadcrumb-item"> *@
+@*             <a asp-controller="Villa" asp-action="Index" class="text-decoration-none">Villas</a> *@
+@*         </li> *@
+@*         <li class="breadcrumb-item active" aria-current="page">@Model.Name</li> *@
+@*     </ol> *@
+@* </nav> *@
+@* *@
+@* @if (TempData["ErrorMessage"] != null) *@
+@* { *@
+@*     <div class="container"> *@
+@*         <div class="alert alert-danger alert-dismissible fade show" role="alert"> *@
+@*             <i class="fas fa-exclamation-triangle me-2"></i> *@
+@*             @TempData["ErrorMessage"] *@
+@*             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> *@
+@*         </div> *@
+@*     </div> *@
+@* } *@
+@* *@
+@* <div class="container py-4"> *@
+@*     <div class="row"> *@
+@*         <!-- Main Content --> *@
+@*         <div class="col-lg-8 mb-4"> *@
+@*             <!-- Villa Header --> *@
+@*             <div class="villa-header mb-4"> *@
+@*                 <div class="d-flex justify-content-between align-items-start mb-3"> *@
+@*                     <div> *@
+@*                         <h1 class="display-5 fw-bold text-primary mb-2">@Model.Name</h1> *@
+@*                         <div class="villa-rating d-flex align-items-center mb-2"> *@
+@*                             <div class="stars text-warning me-2"> *@
+@*                                 <i class="fas fa-star"></i> *@
+@*                                 <i class="fas fa-star"></i> *@
+@*                                 <i class="fas fa-star"></i> *@
+@*                                 <i class="fas fa-star"></i> *@
+@*                                 <i class="fas fa-star"></i> *@
+@*                             </div> *@
+@*                             <span class="text-muted">(5.0) • Premium Villa</span> *@
+@*                         </div> *@
+@*                         <div class="villa-meta text-muted"> *@
+@*                             <i class="fas fa-map-marker-alt me-1"></i> *@
+@*                             <span>Luxury Villa Collection</span> *@
+@*                         </div> *@
+@*                     </div> *@
+@*                     <div class="text-end"> *@
+@*                         <div class="price-display"> *@
+@*                             <span class="h2 text-primary fw-bold">@Model.Rate.ToString("C")</span> *@
+@*                             <small class="text-muted">/night</small> *@
+@*                         </div> *@
+@*                         <div class="availability-status"> *@
+@*                             <span class="badge bg-success"> *@
+@*                                 <i class="fas fa-check-circle me-1"></i>Available *@
+@*                             </span> *@
+@*                         </div> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             </div> *@
+@* *@
+@*             <!-- Villa Image Gallery --> *@
+@*             <div class="villa-gallery mb-4"> *@
+@*                 <div class="row g-2"> *@
+@*                     <div class="col-12"> *@
+@*                         @if (!string.IsNullOrEmpty(Model.ImageUrl)) *@
+@*                         { *@
+@*                             <div class="main-image position-relative overflow-hidden rounded-3"> *@
+@*                                 <img src="@Model.ImageUrl" class="img-fluid w-100" alt="@Model.Name"  *@
+@*                                      style="height: 400px; object-fit: cover; cursor: pointer;"  *@
+@*                                      data-bs-toggle="modal" data-bs-target="#imageModal" /> *@
+@*                                 <div class="position-absolute bottom-0 end-0 p-3"> *@
+@*                                     <button class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#imageModal"> *@
+@*                                         <i class="fas fa-expand me-1"></i>View Gallery *@
+@*                                     </button> *@
+@*                                 </div> *@
+@*                             </div> *@
+@*                         } *@
+@*                         else *@
+@*                         { *@
+@*                             <div class="placeholder-gallery d-flex align-items-center justify-content-center rounded-3"  *@
+@*                                  style="height: 400px; background: linear-gradient(45deg, #f8f9fa, #e9ecef);"> *@
+@*                                 <div class="text-center text-muted"> *@
+@*                                     <i class="fas fa-camera display-3 mb-3"></i> *@
+@*                                     <h4>Image Gallery Coming Soon</h4> *@
+@*                                     <p>Professional photos will be available shortly</p> *@
+@*                                 </div> *@
+@*                             </div> *@
+@*                         } *@
+@*                     </div> *@
+@*                 </div> *@
+@*             </div> *@
+@* *@
+@*             <!-- Villa Features --> *@
+@*             <div class="villa-features mb-4"> *@
+@*                 <h3 class="h4 fw-bold mb-3"> *@
+@*                     <i class="fas fa-star text-warning me-2"></i>Villa Features *@
+@*                 </h3> *@
+@*                 <div class="row g-3"> *@
+@*                     <div class="col-md-3 col-6"> *@
+@*                         <div class="feature-card text-center p-3 bg-light rounded-3 h-100"> *@
+@*                             <i class="fas fa-users text-primary display-6 mb-2"></i> *@
+@*                             <h5 class="fw-bold">@Model.Occupancy</h5> *@
+@*                             <small class="text-muted">Max Guests</small> *@
+@*                         </div> *@
+@*                     </div> *@
+@*                     <div class="col-md-3 col-6"> *@
+@*                         <div class="feature-card text-center p-3 bg-light rounded-3 h-100"> *@
+@*                             <i class="fas fa-ruler-combined text-primary display-6 mb-2"></i> *@
+@*                             <h5 class="fw-bold">@Model.Sqft</h5> *@
+@*                             <small class="text-muted">Square Feet</small> *@
+@*                         </div> *@
+@*                     </div> *@
+@*                     <div class="col-md-3 col-6"> *@
+@*                         <div class="feature-card text-center p-3 bg-light rounded-3 h-100"> *@
+@*                             <i class="fas fa-bed text-primary display-6 mb-2"></i> *@
+@*                             <h5 class="fw-bold">3-4</h5> *@
+@*                             <small class="text-muted">Bedrooms</small> *@
+@*                         </div> *@
+@*                     </div> *@
+@*                     <div class="col-md-3 col-6"> *@
+@*                         <div class="feature-card text-center p-3 bg-light rounded-3 h-100"> *@
+@*                             <i class="fas fa-bath text-primary display-6 mb-2"></i> *@
+@*                             <h5 class="fw-bold">2-3</h5> *@
+@*                             <small class="text-muted">Bathrooms</small> *@
+@*                         </div> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             </div> *@
+@* *@
+@*             <!-- Villa Description --> *@
+@*             <div class="villa-description mb-4"> *@
+@*                 <h3 class="h4 fw-bold mb-3"> *@
+@*                     <i class="fas fa-info-circle text-primary me-2"></i>About This Villa *@
+@*                 </h3> *@
+@*                 <div class="description-content bg-light p-4 rounded-3"> *@
+@*                     <p class="mb-0 lh-lg">@Model.Details</p> *@
+@*                 </div> *@
+@*             </div> *@
+@* *@
+@*             <!-- Amenities --> *@
+@*             @if (!string.IsNullOrEmpty(Model.Amenity)) *@
+@*             { *@
+@*                 <div class="villa-amenities mb-4"> *@
+@*                     <h3 class="h4 fw-bold mb-3"> *@
+@*                         <i class="fas fa-check-circle text-success me-2"></i>Amenities & Services *@
+@*                     </h3> *@
+@*                     <div class="amenities-grid"> *@
+@*                         @{ *@
+@*                             var amenitiesList = Model.Amenity.Split(',').Select(a => a.Trim()).ToList(); *@
+@*                             var amenityIcons = new Dictionary<string, string> *@
+@*                             { *@
+@*                                 {"wifi", "fas fa-wifi"}, *@
+@*                                 {"pool", "fas fa-swimming-pool"}, *@
+@*                                 {"parking", "fas fa-parking"}, *@
+@*                                 {"kitchen", "fas fa-utensils"}, *@
+@*                                 {"air conditioning", "fas fa-snowflake"}, *@
+@*                                 {"tv", "fas fa-tv"}, *@
+@*                                 {"gym", "fas fa-dumbbell"}, *@
+@*                                 {"spa", "fas fa-spa"}, *@
+@*                                 {"beach", "fas fa-umbrella-beach"}, *@
+@*                                 {"garden", "fas fa-seedling"} *@
+@*                             }; *@
+@*                         } *@
+@*                         <div class="row g-3"> *@
+@*                             @foreach (var amenity in amenitiesList) *@
+@*                             { *@
+@*                                 var icon = "fas fa-check"; *@
+@*                                 var lowerAmenity = amenity.ToLower(); *@
+@*                                 foreach (var pair in amenityIcons) *@
+@*                                 { *@
+@*                                     if (lowerAmenity.Contains(pair.Key)) *@
+@*                                     { *@
+@*                                         icon = pair.Value; *@
+@*                                         break; *@
+@*                                     } *@
+@*                                 } *@
+@*                                 <div class="col-md-6"> *@
+@*                                     <div class="amenity-item d-flex align-items-center p-2"> *@
+@*                                         <i class="@icon text-primary me-3"></i> *@
+@*                                         <span>@amenity</span> *@
+@*                                     </div> *@
+@*                                 </div> *@
+@*                             } *@
+@*                         </div> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             } *@
+@* *@
+@*             <!-- Location & Nearby --> *@
+@*             <div class="villa-location mb-4"> *@
+@*                 <h3 class="h4 fw-bold mb-3"> *@
+@*                     <i class="fas fa-map-marker-alt text-danger me-2"></i>Location & Nearby *@
+@*                 </h3> *@
+@*                 <div class="location-content bg-light p-4 rounded-3"> *@
+@*                     <div class="row"> *@
+@*                         <div class="col-md-6"> *@
+@*                             <h5 class="fw-semibold mb-3">Nearby Attractions</h5> *@
+@*                             <ul class="list-unstyled"> *@
+@*                                 <li class="mb-2"> *@
+@*                                     <i class="fas fa-map-pin text-primary me-2"></i> *@
+@*                                     Beach Access - 5 min walk *@
+@*                                 </li> *@
+@*                                 <li class="mb-2"> *@
+@*                                     <i class="fas fa-map-pin text-primary me-2"></i> *@
+@*                                     City Center - 15 min drive *@
+@*                                 </li> *@
+@*                                 <li class="mb-2"> *@
+@*                                     <i class="fas fa-map-pin text-primary me-2"></i> *@
+@*                                     Airport - 30 min drive *@
+@*                                 </li> *@
+@*                             </ul> *@
+@*                         </div> *@
+@*                         <div class="col-md-6"> *@
+@*                             <h5 class="fw-semibold mb-3">Local Services</h5> *@
+@*                             <ul class="list-unstyled"> *@
+@*                                 <li class="mb-2"> *@
+@*                                     <i class="fas fa-shopping-cart text-primary me-2"></i> *@
+@*                                     Grocery Store - 10 min walk *@
+@*                                 </li> *@
+@*                                 <li class="mb-2"> *@
+@*                                     <i class="fas fa-utensils text-primary me-2"></i> *@
+@*                                     Fine Dining - 5 min walk *@
+@*                                 </li> *@
+@*                                 <li class="mb-2"> *@
+@*                                     <i class="fas fa-hospital text-primary me-2"></i> *@
+@*                                     Medical Center - 20 min drive *@
+@*                                 </li> *@
+@*                             </ul> *@
+@*                         </div> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             </div> *@
+@*         </div> *@
+@* *@
+@*         <!-- Booking Sidebar --> *@
+@*         <div class="col-lg-4"> *@
+@*             <div class="booking-card sticky-top" style="top: 100px;"> *@
+@*                 <div class="card shadow-lg border-0"> *@
+@*                     <div class="card-header bg-primary text-white text-center py-3"> *@
+@*                         <div class="d-flex justify-content-between align-items-center"> *@
+@*                             <span class="h4 mb-0 fw-bold">@Model.Rate.ToString("C")</span> *@
+@*                             <small>/night</small> *@
+@*                         </div> *@
+@*                         <div class="mt-1"> *@
+@*                             <small><i class="fas fa-tag me-1"></i>Best Rate Guaranteed</small> *@
+@*                         </div> *@
+@*                     </div> *@
+@*                     <div class="card-body p-4"> *@
+@*                         <!-- Booking Form --> *@
+@*                         <form asp-controller="Booking" asp-action="Create" method="post" class="needs-validation" novalidate> *@
+@*                             <input type="hidden" name="VillaId" value="@Model.Id" /> *@
+@* *@
+@*                             <div class="row g-3 mb-3"> *@
+@*                                 <div class="col-6"> *@
+@*                                     <label for="checkIn" class="form-label fw-semibold"> *@
+@*                                         <i class="fas fa-calendar-plus me-1 text-primary"></i>Check-in *@
+@*                                     </label> *@
+@*                                     <input type="date" class="form-control" id="checkIn" name="CheckIn" required> *@
+@*                                 </div> *@
+@*                                 <div class="col-6"> *@
+@*                                     <label for="checkOut" class="form-label fw-semibold"> *@
+@*                                         <i class="fas fa-calendar-minus me-1 text-primary"></i>Check-out *@
+@*                                     </label> *@
+@*                                     <input type="date" class="form-control" id="checkOut" name="CheckOut" required> *@
+@*                                 </div> *@
+@*                             </div> *@
+@* *@
+@*                             <div class="mb-3"> *@
+@*                                 <label for="guests" class="form-label fw-semibold"> *@
+@*                                     <i class="fas fa-users me-1 text-primary"></i>Guests *@
+@*                                 </label> *@
+@*                                 <select class="form-select" id="guests" name="Guests" required> *@
+@*                                     @for (int i = 1; i <= Model.Occupancy; i++) *@
+@*                                     { *@
+@*                                         <option value="@i">@i @(i == 1 ? "Guest" : "Guests")</option> *@
+@*                                     } *@
+@*                                 </select> *@
+@*                             </div> *@
+@* *@
+@*                             <div class="price-breakdown mb-3"> *@
+@*                                 <div class="d-flex justify-content-between mb-2"> *@
+@*                                     <span>Base rate (per night)</span> *@
+@*                                     <span id="baseRate">@Model.Rate.ToString("C")</span> *@
+@*                                 </div> *@
+@*                                 <div class="d-flex justify-content-between mb-2"> *@
+@*                                     <span>Number of nights</span> *@
+@*                                     <span id="numberOfNights">-</span> *@
+@*                                 </div> *@
+@*                                 <div class="d-flex justify-content-between mb-2 text-muted"> *@
+@*                                     <span>Service fee</span> *@
+@*                                     <span id="serviceFee">$0</span> *@
+@*                                 </div> *@
+@*                                 <div class="d-flex justify-content-between mb-2 text-muted"> *@
+@*                                     <span>Taxes</span> *@
+@*                                     <span id="taxes">$0</span> *@
+@*                                 </div> *@
+@*                                 <hr> *@
+@*                                 <div class="d-flex justify-content-between fw-bold h5"> *@
+@*                                     <span>Total</span> *@
+@*                                     <span id="totalPrice">$0</span> *@
+@*                                 </div> *@
+@*                             </div> *@
+@* *@
+@*                             <div class="d-grid gap-2 mb-3"> *@
+@*                                 <button type="submit" class="btn btn-primary btn-lg"> *@
+@*                                     <i class="fas fa-calendar-check me-2"></i>Reserve Now *@
+@*                                 </button> *@
+@*                                 <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#inquiryModal"> *@
+@*                                     <i class="fas fa-envelope me-2"></i>Send Inquiry *@
+@*                                 </button> *@
+@*                             </div> *@
+@*                         </form> *@
+@* *@
+@*                         <div class="booking-features"> *@
+@*                             <div class="d-flex align-items-center mb-2"> *@
+@*                                 <i class="fas fa-shield-check text-success me-2"></i> *@
+@*                                 <small>Free cancellation up to 24 hours</small> *@
+@*                             </div> *@
+@*                             <div class="d-flex align-items-center mb-2"> *@
+@*                                 <i class="fas fa-clock text-primary me-2"></i> *@
+@*                                 <small>Instant booking confirmation</small> *@
+@*                             </div> *@
+@*                             <div class="d-flex align-items-center mb-2"> *@
+@*                                 <i class="fas fa-headset text-info me-2"></i> *@
+@*                                 <small>24/7 customer support</small> *@
+@*                             </div> *@
+@*                         </div> *@
+@*                     </div> *@
+@*                 </div> *@
+@* *@
+@*                 <!-- Contact Card --> *@
+@*                 <div class="card shadow-sm border-0 mt-4"> *@
+@*                     <div class="card-body text-center p-4"> *@
+@*                         <div class="mb-3"> *@
+@*                             <i class="fas fa-phone-alt display-6 text-primary mb-2"></i> *@
+@*                             <h5 class="fw-bold">Need Help?</h5> *@
+@*                             <p class="text-muted mb-3">Our villa specialists are here to assist you</p> *@
+@*                         </div> *@
+@*                         <div class="d-grid gap-2"> *@
+@*                             <a href="tel:+1234567890" class="btn btn-outline-primary"> *@
+@*                                 <i class="fas fa-phone me-2"></i>Call Now *@
+@*                             </a> *@
+@*                             <a href="mailto:villas@villaweb.com" class="btn btn-outline-secondary"> *@
+@*                                 <i class="fas fa-envelope me-2"></i>Email Us *@
+@*                             </a> *@
+@*                         </div> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* <!-- Image Modal --> *@
+@* <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true"> *@
+@*     <div class="modal-dialog modal-xl"> *@
+@*         <div class="modal-content"> *@
+@*             <div class="modal-header"> *@
+@*                 <h5 class="modal-title" id="imageModalLabel">@Model.Name - Gallery</h5> *@
+@*                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+@*             </div> *@
+@*             <div class="modal-body p-0"> *@
+@*                 @if (!string.IsNullOrEmpty(Model.ImageUrl)) *@
+@*                 { *@
+@*                     <img src="@Model.ImageUrl" class="img-fluid w-100" alt="@Model.Name" /> *@
+@*                 } *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* <!-- Inquiry Modal --> *@
+@* <div class="modal fade" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryModalLabel" aria-hidden="true"> *@
+@*     <div class="modal-dialog"> *@
+@*         <div class="modal-content"> *@
+@*             <div class="modal-header"> *@
+@*                 <h5 class="modal-title" id="inquiryModalLabel"> *@
+@*                     <i class="fas fa-envelope me-2"></i>Send Inquiry - @Model.Name *@
+@*                 </h5> *@
+@*                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+@*             </div> *@
+@*             <div class="modal-body"> *@
+@*                 <form id="inquiryForm"> *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="inquiryName" class="form-label">Your Name *</label> *@
+@*                         <input type="text" class="form-control" id="inquiryName" required> *@
+@*                     </div> *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="inquiryEmail" class="form-label">Email Address *</label> *@
+@*                         <input type="email" class="form-control" id="inquiryEmail" required> *@
+@*                     </div> *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="inquiryPhone" class="form-label">Phone Number</label> *@
+@*                         <input type="tel" class="form-control" id="inquiryPhone"> *@
+@*                     </div> *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="inquiryMessage" class="form-label">Message *</label> *@
+@*                         <textarea class="form-control" id="inquiryMessage" rows="4"  *@
+@*                                   placeholder="Please let us know your preferred dates, number of guests, and any special requirements..." required></textarea> *@
+@*                     </div> *@
+@*                 </form> *@
+@*             </div> *@
+@*             <div class="modal-footer"> *@
+@*                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> *@
+@*                 <button type="submit" form="inquiryForm" class="btn btn-primary"> *@
+@*                     <i class="fas fa-paper-plane me-2"></i>Send Inquiry *@
+@*                 </button> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* <!-- Back to Villas Button --> *@
+@* <div class="container mb-4"> *@
+@*     <div class="text-center"> *@
+@*         <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary btn-lg"> *@
+@*             <i class="fas fa-arrow-left me-2"></i>Back to All Villas *@
+@*         </a> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* @section Scripts { *@
+@*     <script> *@
+@*         $(document).ready(function() { *@
+@*             const baseRate = @Model.Rate; *@
+@*              *@
+@*             // Set minimum date to today *@
+@*             const today = new Date().toISOString().split('T')[0]; *@
+@*             $('#checkIn').attr('min', today); *@
+@*             $('#checkOut').attr('min', today); *@
+@*              *@
+@*             // Calculate price on date change *@
+@*             $('#checkIn, #checkOut').on('change', function() { *@
+@*                 calculatePrice(); *@
+@*                 updateCheckOutMinDate(); *@
+@*             }); *@
+@*              *@
+@*             function updateCheckOutMinDate() { *@
+@*                 const checkInDate = $('#checkIn').val(); *@
+@*                 if (checkInDate) { *@
+@*                     const minCheckOut = new Date(checkInDate); *@
+@*                     minCheckOut.setDate(minCheckOut.getDate() + 1); *@
+@*                     $('#checkOut').attr('min', minCheckOut.toISOString().split('T')[0]); *@
+@*                 } *@
+@*             } *@
+@*              *@
+@*             function calculatePrice() { *@
+@*                 const checkIn = new Date($('#checkIn').val()); *@
+@*                 const checkOut = new Date($('#checkOut').val()); *@
+@*                  *@
+@*                 if (checkIn && checkOut && checkOut > checkIn) { *@
+@*                     const timeDiff = checkOut.getTime() - checkIn.getTime(); *@
+@*                     const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)); *@
+@*                      *@
+@*                     const subtotal = baseRate * daysDiff; *@
+@*                     const serviceFee = subtotal * 0.1; // 10% service fee *@
+@*                     const taxes = subtotal * 0.12; // 12% taxes *@
+@*                     const total = subtotal + serviceFee + taxes; *@
+@*                      *@
+@*                     $('#numberOfNights').text(daysDiff + (daysDiff === 1 ? ' night' : ' nights')); *@
+@*                     $('#serviceFee').text('$' + serviceFee.toFixed(2)); *@
+@*                     $('#taxes').text('$' + taxes.toFixed(2)); *@
+@*                     $('#totalPrice').text('$' + total.toFixed(2)); *@
+@*                 } else { *@
+@*                     $('#numberOfNights').text('-'); *@
+@*                     $('#serviceFee').text('$0'); *@
+@*                     $('#taxes').text('$0'); *@
+@*                     $('#totalPrice').text('$0'); *@
+@*                 } *@
+@*             } *@
+@*              *@
+@*             // Booking form submission *@
+@*             $('#bookingForm').on('submit', function(e) { *@
+@*                 e.preventDefault(); *@
+@*                  *@
+@*                 if (this.checkValidity()) { *@
+@*                     // Simulate booking process *@
+@*                     const button = $(this).find('button[type="submit"]'); *@
+@*                     const originalText = button.html(); *@
+@*                      *@
+@*                     button.html('<i class="fas fa-spinner fa-spin me-2"></i>Processing...').prop('disabled', true); *@
+@*                      *@
+@*                     setTimeout(function() { *@
+@*                         alert('Booking request submitted successfully! You will receive a confirmation email shortly.'); *@
+@*                         button.html(originalText).prop('disabled', false); *@
+@*                     }, 2000); *@
+@*                 } else { *@
+@*                     this.classList.add('was-validated'); *@
+@*                 } *@
+@*             }); *@
+@*              *@
+@*             // Inquiry form submission *@
+@*             $('#inquiryForm').on('submit', function(e) { *@
+@*                 e.preventDefault(); *@
+@*                  *@
+@*                 if (this.checkValidity()) { *@
+@*                     const button = $('#inquiryModal').find('button[type="submit"]'); *@
+@*                     const originalText = button.html(); *@
+@*                      *@
+@*                     button.html('<i class="fas fa-spinner fa-spin me-2"></i>Sending...').prop('disabled', true); *@
+@*                      *@
+@*                     setTimeout(function() { *@
+@*                         alert('Inquiry sent successfully! We will get back to you within 24 hours.'); *@
+@*                         button.html(originalText).prop('disabled', false); *@
+@*                         $('#inquiryModal').modal('hide'); *@
+@*                         $('#inquiryForm')[0].reset(); *@
+@*                     }, 1500); *@
+@*                 } else { *@
+@*                     this.classList.add('was-validated'); *@
+@*                 } *@
+@*             }); *@
+@*              *@
+@*             // Smooth scrolling for internal links *@
+@*             $('a[href^="#"]').on('click', function(event) { *@
+@*                 const target = $(this.getAttribute('href')); *@
+@*                 if (target.length) { *@
+@*                     event.preventDefault(); *@
+@*                     $('html, body').stop().animate({ *@
+@*                         scrollTop: target.offset().top - 100 *@
+@*                     }, 800); *@
+@*                 } *@
+@*             }); *@
+@*              *@
+@*             // Image zoom functionality *@
+@*             $('.main-image img').on('click', function() { *@
+@*                 $(this).toggleClass('zoomed'); *@
+@*             }); *@
+@*              *@
+@*             // Initialize tooltips *@
+@*             $('[data-bs-toggle="tooltip"]').tooltip(); *@
+@*              *@
+@*             // Animate elements on scroll *@
+@*             function animateOnScroll() { *@
+@*                 $('.feature-card, .amenity-item').each(function() { *@
+@*                     const elementTop = $(this).offset().top; *@
+@*                     const scrollTop = $(window).scrollTop(); *@
+@*                     const windowHeight = $(window).height(); *@
+@*                      *@
+@*                     if (elementTop < scrollTop + windowHeight - 50) { *@
+@*                         $(this).addClass('animate__animated animate__fadeInUp'); *@
+@*                     } *@
+@*                 }); *@
+@*             } *@
+@*              *@
+@*             $(window).on('scroll', animateOnScroll); *@
+@*             animateOnScroll(); // Initial call *@
+@*         }); *@
+@*     </script> *@
+@*      *@
+@*     <!-- Add animate.css for animations --> *@
+@*      *@
+@*      *@
+@*     <style> *@
+@*         .main-image img.zoomed { *@
+@*             transform: scale(1.1); *@
+@*             transition: transform 0.3s ease; *@
+@*         } *@
+@*          *@
+@*         .booking-card .sticky-top { *@
+@*             z-index: 1020; *@
+@*         } *@
+@*          *@
+@*         .feature-card { *@
+@*             transition: all 0.3s ease; *@
+@*         } *@
+@*          *@
+@*         .feature-card:hover { *@
+@*             transform: translateY(-5px); *@
+@*             box-shadow: 0 8px 25px rgba(0,0,0,0.1); *@
+@*         } *@
+@*          *@
+@*         .amenity-item { *@
+@*             transition: all 0.2s ease; *@
+@*             border-radius: 8px; *@
+@*         } *@
+@*          *@
+@*         .amenity-item:hover { *@
+@*             background-color: #f8f9fa; *@
+@*             transform: translateX(5px); *@
+@*         } *@
+@*          *@
+@*         .price-breakdown { *@
+@*             background-color: #f8f9fa; *@
+@*             border-radius: 8px; *@
+@*             padding: 1rem; *@
+@*         } *@
+@*         *@
+@*     </style> *@
+@* } *@

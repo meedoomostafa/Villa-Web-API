@@ -1,0 +1,128 @@
+@model VillaNumberCreateDTO
+
+@{
+    ViewBag.Title = "Create Villa Number";
+    Layout = "_Layout";
+}
+
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header Section -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="hero-title mb-2">
+                        <i class="fas fa-plus me-2 text-primary"></i>Create New Villa Number
+                    </h2>
+                    <p class="hero-subtitle mb-0">Add a new villa number with special configurations</p>
+                </div>
+                <div class="hero-features">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2">
+                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content Card -->
+            <div class="card">
+                <div class="card-content p-4">
+                    <form asp-area="Company" asp-controller="VillaNumber" asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-4">
+                                    <label asp-for="VillaNo" class="form-label fw-semibold">
+                                        <i class="fas fa-hashtag me-2 text-primary"></i>Villa Number
+                                    </label>
+                                    <input asp-for="VillaNo" type="number" class="form-control form-control-lg" placeholder="Enter Villa Number" />
+                                    <span asp-validation-for="VillaNo" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-4">
+                                    <label asp-for="VillaId" class="form-label fw-semibold">
+                                        <i class="fas fa-home me-2 text-success"></i>Villa ID
+                                    </label>
+                                    <input asp-for="VillaId" type="number" class="form-control form-control-lg" placeholder="Enter Villa ID" />
+                                    <span asp-validation-for="VillaId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="SpetialDeatils" class="form-label fw-semibold">
+                                <i class="fas fa-star me-2 text-warning"></i>Special Details
+                            </label>
+                            <textarea asp-for="SpetialDeatils" class="form-control" rows="4" placeholder="Enter any special details or configurations for this villa number..."></textarea>
+                            <span asp-validation-for="SpetialDeatils" class="text-danger"></span>
+                            <div class="form-text text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Optional: Add any special features, configurations, or notes for this villa number.
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mt-5">
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-primary btn-lg px-4">
+                                    <i class="fas fa-save me-2"></i>Create Villa Number
+                                </button>
+                                <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Help Card -->
+            <div class="card mt-4">
+                <div class="card-content p-4">
+                    <h5 class="mb-3">
+                        <i class="fas fa-lightbulb me-2 text-info"></i>Tips for Creating Villa Numbers
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="brand-icon me-3" style="width: 32px; height: 32px; font-size: 12px;">
+                                    <i class="fas fa-hashtag"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Unique Numbers</h6>
+                                    <small class="text-muted">Each villa number should be unique within the system.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="brand-icon me-3" style="width: 32px; height: 32px; font-size: 12px;">
+                                    <i class="fas fa-link"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Villa Association</h6>
+                                    <small class="text-muted">Make sure the Villa ID corresponds to an existing villa.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="brand-icon me-3" style="width: 32px; height: 32px; font-size: 12px;">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Special Details</h6>
+                                    <small class="text-muted">Include any unique features or configurations for this specific villa number.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

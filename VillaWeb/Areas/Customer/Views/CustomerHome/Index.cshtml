@@ -1,0 +1,349 @@
+@model List<VillaDTO>
+
+@{
+    ViewData["Title"] = "Luxury Villa Collection - VillaWeb";
+    ViewData["Description"] = "Discover our exclusive collection of luxury villas for your perfect getaway. Premium accommodations with world-class amenities.";
+    Layout = "_Layout";
+}
+
+<!-- Hero Section for Villas -->
+<section class="villas-hero py-5 mb-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px;">
+    <div class="container text-center text-white">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="hero-icon mb-4">
+                    <i class="fas fa-home display-1"></i>
+                </div>
+                <h1 class="display-4 fw-bold mb-3">Luxury Villa Collection</h1>
+                <p class="lead mb-4">Discover our handpicked selection of premium villas, each offering unique experiences and world-class amenities for your perfect getaway.</p>
+                <div class="villa-stats d-flex justify-content-center gap-4 flex-wrap">
+                    <div class="stat-item">
+                        <div class="stat-number h4 mb-0">@(Model?.Count ?? 0)</div>
+                        <small class="text-white-50">Available Villas</small>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number h4 mb-0">24/7</div>
+                        <small class="text-white-50">Concierge Service</small>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number h4 mb-0">5★</div>
+                        <small class="text-white-50">Premium Rating</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Filter and Search Section -->
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text border-0 bg-light">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" id="villaSearch" class="form-control border-0 bg-light" placeholder="Search villas by name or amenities...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="occupancyFilter" class="form-select border-0 bg-light">
+                                <option value="">All Occupancies</option>
+                                <option value="2">Up to 2 guests</option>
+                                <option value="4">Up to 4 guests</option>
+                                <option value="6">Up to 6 guests</option>
+                                <option value="8">8+ guests</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="priceFilter" class="form-select border-0 bg-light">
+                                <option value="">All Price Ranges</option>
+                                <option value="0-200">$0 - $200</option>
+                                <option value="200-500">$200 - $500</option>
+                                <option value="500-1000">$500 - $1000</option>
+                                <option value="1000+">$1000+</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button id="clearFilters" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-times me-1"></i>Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Villas Grid -->
+<div class="container">
+    @if (Model != null && Model.Any())
+    {
+        <div id="villasContainer" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var villa in Model)
+            {
+                <div class="col villa-card" 
+                     data-name="@villa.Name.ToLower()" 
+                     data-amenities="@(villa.Amenity?.ToLower() ?? "")"
+                     data-occupancy="@villa.Occupancy"
+                     data-rate="@villa.Rate">
+                    <div class="card h-100 shadow-sm border-0 villa-item">
+                        <div class="position-relative overflow-hidden">
+                            @if (!string.IsNullOrEmpty(villa.ImageUrl))
+                            {
+                                <img src="@villa.ImageUrl" class="card-img-top villa-image" alt="@villa.Name" style="height: 250px; object-fit: cover; transition: transform 0.3s ease;" />
+                            }
+                            else
+                            {
+                                <div class="placeholder-image d-flex align-items-center justify-content-center" style="height: 250px; background: linear-gradient(45deg, #f8f9fa, #e9ecef);">
+                                    <div class="text-center text-muted">
+                                        <i class="fas fa-image display-4 mb-2"></i>
+                                        <p class="mb-0">No Image Available</p>
+                                    </div>
+                                </div>
+                            }
+                            <div class="position-absolute top-0 end-0 p-3">
+                                <span class="badge bg-primary rounded-pill">
+                                    <i class="fas fa-star me-1"></i>Premium
+                                </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 p-3">
+                                <span class="badge bg-dark bg-opacity-75 rounded-pill">
+                                    <i class="fas fa-dollar-sign me-1"></i>@villa.Rate.ToString("C")/night
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <h5 class="card-title fw-bold text-dark mb-2">
+                                    <i class="fas fa-home me-2 text-primary"></i>@villa.Name
+                                </h5>
+                                <p class="card-text text-muted small">
+                                    @(villa.Details.Length > 120 ? villa.Details.Substring(0, 120) + "..." : villa.Details)
+                                </p>
+                            </div>
+                            
+                            <div class="villa-features mb-3">
+                                <div class="row g-2 text-center">
+                                    <div class="col-4">
+                                        <div class="feature-item p-2 bg-light rounded">
+                                            <i class="fas fa-users text-primary d-block mb-1"></i>
+                                            <small class="fw-medium">@villa.Occupancy</small>
+                                            <div class="text-muted" style="font-size: 0.75rem;">Guests</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-item p-2 bg-light rounded">
+                                            <i class="fas fa-ruler-combined text-primary d-block mb-1"></i>
+                                            <small class="fw-medium">@villa.Sqft</small>
+                                            <div class="text-muted" style="font-size: 0.75rem;">Sqft</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-item p-2 bg-light rounded">
+                                            <i class="fas fa-star text-primary d-block mb-1"></i>
+                                            <small class="fw-medium">5.0</small>
+                                            <div class="text-muted" style="font-size: 0.75rem;">Rating</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(villa.Amenity))
+                            {
+                                <div class="amenities mb-3">
+                                    <small class="text-muted d-block mb-1">
+                                        <i class="fas fa-check-circle text-success me-1"></i>Key Amenities:
+                                    </small>
+                                    <div class="amenity-tags">
+                                        @{
+                                            var amenities = villa.Amenity.Split(',').Take(3);
+                                        }
+                                        @foreach (var amenity in amenities)
+                                        {
+                                            <span class="badge bg-light text-dark me-1 mb-1">@amenity.Trim()</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            
+                            <div class="mt-auto">
+                                <div class="d-grid gap-2">
+                                    <a asp-area="Company" asp-controller="Villa" asp-action="Details" asp-route-id="@villa.Id" 
+                                       class="btn btn-primary btn-lg">
+                                        <i class="fas fa-eye me-2"></i>View Details & Book
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        
+        <!-- Load More Button (if you implement pagination) -->
+        <div class="text-center mt-5">
+            <button id="loadMoreBtn" class="btn btn-outline-primary btn-lg" style="display: none;">
+                <i class="fas fa-plus me-2"></i>Load More Villas
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <div class="empty-state">
+                <i class="fas fa-search display-1 text-muted mb-4"></i>
+                <h3 class="text-muted mb-3">No Villas Available</h3>
+                <p class="text-muted mb-4">We're currently updating our villa collection. Please check back soon for amazing properties!</p>
+                <a asp-area="Customer" asp-controller="CustomerHome" asp-action="Index" class="btn btn-primary">
+                    <i class="fas fa-refresh me-2"></i>Refresh Page
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize villa filtering and search
+            let allVillas = $('.villa-card');
+            
+            // Search functionality
+            $('#villaSearch').on('input', function() {
+                filterVillas();
+            });
+            
+            // Filter functionality
+            $('#occupancyFilter, #priceFilter').on('change', function() {
+                filterVillas();
+            });
+            
+            // Clear filters
+            $('#clearFilters').on('click', function() {
+                $('#villaSearch').val('');
+                $('#occupancyFilter').val('');
+                $('#priceFilter').val('');
+                filterVillas();
+            });
+            
+            function filterVillas() {
+                const searchTerm = $('#villaSearch').val().toLowerCase();
+                const occupancyFilter = $('#occupancyFilter').val();
+                const priceFilter = $('#priceFilter').val();
+                
+                let visibleCount = 0;
+                
+                allVillas.each(function() {
+                    const $villa = $(this);
+                    const name = $villa.data('name');
+                    const amenities = $villa.data('amenities');
+                    const occupancy = parseInt($villa.data('occupancy'));
+                    const rate = parseFloat($villa.data('rate'));
+                    
+                    let showVilla = true;
+                    
+                    // Search filter
+                    if (searchTerm && !name.includes(searchTerm) && !amenities.includes(searchTerm)) {
+                        showVilla = false;
+                    }
+                    
+                    // Occupancy filter
+                    if (occupancyFilter) {
+                        const filterValue = parseInt(occupancyFilter);
+                        if (filterValue === 8 && occupancy < 8) showVilla = false;
+                        else if (filterValue !== 8 && occupancy > filterValue) showVilla = false;
+                    }
+                    
+                    // Price filter
+                    if (priceFilter) {
+                        if (priceFilter === '0-200' && (rate < 0 || rate > 200)) showVilla = false;
+                        else if (priceFilter === '200-500' && (rate < 200 || rate > 500)) showVilla = false;
+                        else if (priceFilter === '500-1000' && (rate < 500 || rate > 1000)) showVilla = false;
+                        else if (priceFilter === '1000+' && rate < 1000) showVilla = false;
+                    }
+                    
+                    if (showVilla) {
+                        $villa.show();
+                        visibleCount++;
+                    } else {
+                        $villa.hide();
+                    }
+                });
+                
+                // Show/hide no results message
+                if (visibleCount === 0) {
+                    if ($('.no-results').length === 0) {
+                        $('#villasContainer').after(`
+                            <div class="no-results text-center py-5">
+                                <i class="fas fa-search display-4 text-muted mb-3"></i>
+                                <h4 class="text-muted">No villas match your criteria</h4>
+                                <p class="text-muted">Try adjusting your filters or search terms</p>
+                            </div>
+                        `);
+                    }
+                } else {
+                    $('.no-results').remove();
+                }
+            }
+            
+            // Hover effects for villa cards
+            $('.villa-item').hover(
+                function() {
+                    $(this).find('.villa-image').css('transform', 'scale(1.05)');
+                    $(this).addClass('shadow-lg');
+                },
+                function() {
+                    $(this).find('.villa-image').css('transform', 'scale(1)');
+                    $(this).removeClass('shadow-lg');
+                }
+            );
+            
+            // Animate villa cards on scroll
+            function animateOnScroll() {
+                $('.villa-item').each(function() {
+                    const elementTop = $(this).offset().top;
+                    const scrollTop = $(window).scrollTop();
+                    const windowHeight = $(window).height();
+                    
+                    if (elementTop < scrollTop + windowHeight - 100) {
+                        $(this).addClass('animate__animated animate__fadeInUp');
+                    }
+                });
+            }
+            
+            $(window).on('scroll', animateOnScroll);
+            animateOnScroll(); // Initial call
+            
+            // Initialize tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+    </script>
+    
+    <!-- Add animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+}
