@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace VillaWebApi.Data.Configrations;
 
-public class VillaModelConfigrations : IEntityTypeConfiguration<Models.Villa>
+public class VillaModelConfigurations : IEntityTypeConfiguration<Models.Villa>
 {
     public void Configure(EntityTypeBuilder<Models.Villa> builder)
     {

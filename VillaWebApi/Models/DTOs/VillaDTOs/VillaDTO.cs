@@ -1,29 +1,19 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace VillaWebApi.Models.DTOs;
+namespace VillaWebApi.Models.DTOs.VillaDTOs;
 
-public sealed class VillaUpdateDTO
+public sealed class VillaDTO
 {
-    [Required] 
     public int Id { get; set; }
 
-    [Required] [StringLength(30)] 
-    public string Name { get; set; }
+    [Required] [StringLength(30)] public string Name { get; set; }
 
-    [Required] 
     public string Details { get; set; }
 
-    [Required] 
-    public double Rate { get; set; }
+    [Required] public double Rate { get; set; }
 
-    [Required] 
     public int Occupancy { get; set; }
-
-    [Required] 
     public int Sqft { get; set; }
-
-    [Required] 
     public string ImageUrl { get; set; }
-
     public string Amenity { get; set; }
 }

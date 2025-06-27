@@ -2,7 +2,7 @@ using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using VillaWebApi.Models.DTOs;
+using VillaWebApi.Models.DTOs.VillaDTOs;
 using VillaWebApi.Models;
 using VillaWebApi.Repository.Interfaces;
 
@@ -30,6 +30,7 @@ public class VillaApiController : ControllerBase
     [HttpGet("GetAllVilla")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<APIResponse>> GetAllVillas()
     {
         try
@@ -44,7 +45,6 @@ public class VillaApiController : ControllerBase
             }
             _response.Result = _mapper.Map<List<VillaDTO>>(villas);
             _response.StatusCode = HttpStatusCode.OK;
-            _response.IsSuccess = true;
             return Ok(_response);
         }
         catch (Exception e)
@@ -60,6 +60,7 @@ public class VillaApiController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<APIResponse>> GetVilla(int id)
     {
         try
@@ -82,7 +83,6 @@ public class VillaApiController : ControllerBase
             }
             _response.Result = _mapper.Map<VillaDTO>(villa);
             _response.StatusCode = HttpStatusCode.OK;
-            _response.IsSuccess = true;
             return Ok(_response);
         }
         catch (Exception e)
@@ -97,6 +97,7 @@ public class VillaApiController : ControllerBase
     [HttpPost("CreateVilla")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<APIResponse>> CreateVilla([FromBody] VillaCreateDTO createDTO)
     {
         try
@@ -124,7 +125,6 @@ public class VillaApiController : ControllerBase
             await _unitOfWork.SaveChangesAsync();
             _response.Result = _mapper.Map<VillaDTO>(model);
             _response.StatusCode = HttpStatusCode.Created;
-            _response.IsSuccess = true;
             return CreatedAtAction("GetVilla", new { id = model.Id }, _response);
         }
         catch (Exception e)
@@ -139,11 +139,12 @@ public class VillaApiController : ControllerBase
     [HttpPut("UpdateVilla/{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<APIResponse>> UpdateVilla(int id, VillaUpdateDTO updateDTO)
     {
         try
         {
-            if (updateDTO == null || id != updateDTO.Id)
+            if (id == 0 || updateDTO == null || id != updateDTO.Id)
             {
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -164,7 +165,6 @@ public class VillaApiController : ControllerBase
             await _unitOfWork.Villa.UpdateAsync(model);
             await _unitOfWork.SaveChangesAsync();
             _response.StatusCode = HttpStatusCode.OK;
-            _response.IsSuccess = true;
             return Ok(_response);
         }
         catch (Exception e)
@@ -210,6 +210,7 @@ public class VillaApiController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<APIResponse>> DeleteVilla(int id)
     {
         try
@@ -234,7 +235,6 @@ public class VillaApiController : ControllerBase
             await _unitOfWork.Villa.RemoveAsync(villa);
             await _unitOfWork.SaveChangesAsync();
             _response.StatusCode = HttpStatusCode.NoContent;
-            _response.IsSuccess = true;
             return Ok(_response);
         }
         catch (Exception e)
