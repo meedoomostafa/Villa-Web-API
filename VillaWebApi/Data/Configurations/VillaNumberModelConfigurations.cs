@@ -20,5 +20,10 @@ public class VillaNumberModelConfigurations : IEntityTypeConfiguration<VillaNumb
         
         builder.Property(d => d.UpdatedDate)
             .HasDefaultValueSql("getdate()");
+
+        builder.Property(d => d.VillaId).IsRequired(false);
+        
+        builder.HasOne(vn => vn.Villa)
+            .WithMany(v => v.VillaNumber).HasForeignKey(vn => vn.VillaId);
     }
 }

@@ -11,4 +11,6 @@ public class Villa
     public string Amenity { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    
+    public List<VillaNumber> VillaNumber { get; set; }
 }

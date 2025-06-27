@@ -106,6 +106,15 @@ public class VillaNumberApiController : ControllerBase
                 return BadRequest(_response);
             }
             
+            var checkVillaExistece = await _unitOfWork.Villa.GetAsync(u => u.Id == CreateDTO.VillaId);
+            if (checkVillaExistece == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add("No villa-number found");
+                return NotFound(_response);
+            }
+            
             var checkVillaNumberExistence = await _unitOfWork.VillaNumber
                 .GetAsync(u => u.VillaNo  == CreateDTO.VillaNo);
             if (checkVillaNumberExistence != null)
@@ -137,12 +146,20 @@ public class VillaNumberApiController : ControllerBase
     {
         try
         {
-            if (id == 0 || UpdateDTO == null || UpdateDTO.VillaNo != id )
+            if (id == 0 || UpdateDTO == null || UpdateDTO.VillaNo != id)
             {
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.ErrorMessages.Add("No villa-number found");
+                _response.ErrorMessages.Add("Wrong with data sent !");
                 return BadRequest(_response);
+            }
+
+            if (await _unitOfWork.Villa.GetAsync(u => u.Id == UpdateDTO.VillaId) == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add("Invalid villaId !");
+                return NotFound(_response);
             }
             
             VillaNumber villaNumber = _mapper.Map<VillaNumber>(UpdateDTO);
