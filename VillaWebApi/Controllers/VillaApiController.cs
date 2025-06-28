@@ -2,9 +2,9 @@ using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using VillaWebApi.Models.DTOs.VillaDTOs;
-using VillaWebApi.Models;
-using VillaWebApi.Repository.Interfaces;
+using VillaModels.Models;
+using VillaModels.Models.DTOs.VillaDTOs;
+using VillaRepository.Repository.Interfaces;
 
 namespace VillaWebApi.Controllers;
 
@@ -187,7 +187,7 @@ public class VillaApiController : ControllerBase
             return BadRequest();
         }
 
-        Models.Villa? villaFromDb = await _unitOfWork.Villa.GetAsync(u => u.Id == id,false);
+        Villa? villaFromDb = await _unitOfWork.Villa.GetAsync(u => u.Id == id,false);
         if (villaFromDb == null)
         {
             return NotFound("No Villa found");

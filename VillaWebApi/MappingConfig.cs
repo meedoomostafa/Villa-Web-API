@@ -1,7 +1,7 @@
 using AutoMapper;
-using VillaWebApi.Models;
-using VillaWebApi.Models.DTOs.VillaDTOs;
-using VillaWebApi.Models.DTOs.VillaNumberDTOs;
+using VillaModels.Models;
+using VillaModels.Models.DTOs.VillaDTOs;
+using VillaModels.Models.DTOs.VillaNumberDTOs;
 
 namespace VillaWebApi;
 

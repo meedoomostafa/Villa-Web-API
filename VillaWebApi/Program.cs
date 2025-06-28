@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using VillaRepository.Data;
+using VillaRepository.Repository;
+using VillaRepository.Repository.Interfaces;
 using VillaWebApi;
-using VillaWebApi.Data;
-using VillaWebApi.Repository;
-using VillaWebApi.Repository.Interfaces;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

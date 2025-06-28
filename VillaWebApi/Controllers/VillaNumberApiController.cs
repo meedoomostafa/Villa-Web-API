@@ -1,10 +1,9 @@
 using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using VillaWebApi.Models;
-using VillaWebApi.Models.DTOs.VillaNumberDTOs;
-using VillaWebApi.Repository;
-using VillaWebApi.Repository.Interfaces;
+using VillaModels.Models;
+using VillaModels.Models.DTOs.VillaNumberDTOs;
+using VillaRepository.Repository.Interfaces;
 
 namespace VillaWebApi.Controllers;
 

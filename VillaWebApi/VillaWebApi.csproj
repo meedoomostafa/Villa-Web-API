@@ -20,4 +20,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.4"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VillaModels\VillaModels.csproj" />
+    <ProjectReference Include="..\VillaRepository\VillaRepository.csproj" />
+  </ItemGroup>
+
 </Project>
