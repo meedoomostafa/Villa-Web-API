@@ -5,7 +5,7 @@ using VillaModels.Models.DTOs.VillaNumberDTOs;
 
 namespace VillaWebApi;
 
-public class MappingConfig : Profile
+public sealed class MappingConfig : Profile
 {
     public MappingConfig()
     {

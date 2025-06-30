@@ -14,10 +14,9 @@ public class VillaRepository : Repository<Villa> , IVillaRepository
         _context = context;
     }
 
-    public async Task<Villa> UpdateAsync(Villa entity)
+    public async Task UpdateAsync(Villa entity)
     {
         entity.UpdatedAt = DateTime.Now;
         _context.Villas.Update(entity);
-        return entity;
     }
 }

@@ -1,0 +1,79 @@
+@model List<VillaDTO>
+
+@{
+    ViewBag.Title = "Villa List";
+    Layout = "_Layout";
+}
+
+<br/>
+<div class="container p-4 border">
+    <div class="row pb-2">
+        <h1 class="text-primary"><i class="fas fa-home me-2"></i>Villa List</h1>
+    </div>
+    <div class="col text-end pt-1">
+        <a class="btn btn-outline-primary" asp-controller="Villa" asp-action="Create">
+            <i class="fas fa-plus me-1"></i>Create New Villa
+        </a>
+    </div>
+
+    <!-- Villa List Table -->
+    <div class="table-responsive">
+        <table class="table table-striped mt-3">
+            <thead>
+            <tr>
+                <th scope="col"><i class="fas fa-id-badge me-1"></i>ID</th>
+                <th scope="col"><i class="fas fa-tag me-1"></i>Name</th>
+                <th scope="col"><i class="fas fa-info-circle me-1"></i>Details</th>
+                <th scope="col"><i class="fas fa-star me-1"></i>Amenity</th>
+                <th scope="col"><i class="fas fa-dollar-sign me-1"></i>Rate</th>
+                <th scope="col"><i class="fas fa-users me-1"></i>Occupancy</th>
+                <th scope="col"><i class="fas fa-ruler-combined me-1"></i>Sqft</th>
+                <th scope="col"><i class="fas fa-tools me-1"></i>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var villa in Model)
+                {
+                    <tr>
+                        <td>@villa.Id</td>
+                        <td>@villa.Name</td>
+                        <td>@villa.Details</td>
+                        <td>@villa.Amenity</td>
+                        <td>@villa.Rate.ToString("C")</td>
+                        <td>@villa.Occupancy</td>
+                        <td>@villa.Sqft</td>
+                        <td>
+                            <a class="btn btn-sm btn-primary me-1" asp-controller="Villa" asp-action="Edit" asp-route-id="@villa.Id" data-bs-toggle="tooltip" title="Edit Villa">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a class="btn btn-sm btn-danger" asp-controller="Villa" asp-action="Delete" asp-route-id="@villa.Id" onclick="return confirm('Are you sure you want to delete this villa?');" data-bs-toggle="tooltip" title="Delete Villa">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8" class="text-center"><i class="fas fa-exclamation-circle me-1"></i>No villas found.</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Initialize Bootstrap tooltips
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+}

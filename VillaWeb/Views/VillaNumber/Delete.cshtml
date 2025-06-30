@@ -1,0 +1,33 @@
+@model VillaNumberDTO
+
+@{
+    ViewBag.Title = "Delete Villa Number";
+    Layout = "_Layout";
+}
+
+<div class="container p-4 border">
+    <h1 class="text-danger"><i class="fas fa-trash-alt me-2"></i>Delete Villa Number</h1>
+    <h4>Are you sure you want to delete this villa number?</h4>
+    <hr />
+
+    <dl class="row">
+        <dt class="col-sm-2">Villa Number</dt>
+        <dd class="col-sm-10">@Model.VillaNo</dd>
+        
+        <dt class="col-sm-2">Villa Name</dt>
+        <dd class="col-sm-10">@Model.Villa.Name</dd>
+
+        <dt class="col-sm-2">Villa Id</dt>
+        <dd class="col-sm-10">@Model.VillaId</dd>
+
+        <dt class="col-sm-2">Special Details</dt>
+        <dd class="col-sm-10">@Model.SpetialDeatils</dd>
+
+    </dl>
+
+    <form asp-action="DeleteConfirm" asp-route-id="@Model.VillaNo" method="post">
+        <input type="hidden" name="id" asp-for="VillaNo" />
+        <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt me-1"></i>Delete</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2"><i class="fas fa-arrow-left me-1"></i>Cancel</a>
+    </form>
+</div>

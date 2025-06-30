@@ -27,7 +27,7 @@ public class VillaApiController : ControllerBase
         };
     }
 
-    [HttpGet("GetAllVilla")]
+    [HttpGet(Name = "GetAllVillas")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -56,7 +56,7 @@ public class VillaApiController : ControllerBase
         return StatusCode((int)HttpStatusCode.InternalServerError,_response);
     }
 
-    [HttpGet("GetVilla/{id:int}")]
+    [HttpGet("{id:int}" , Name = "GetVilla")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -94,7 +94,7 @@ public class VillaApiController : ControllerBase
         return StatusCode((int) HttpStatusCode.InternalServerError, _response);
     }
 
-    [HttpPost("CreateVilla")]
+    [HttpPost(Name = "CreateVilla")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -136,7 +136,7 @@ public class VillaApiController : ControllerBase
         return StatusCode((int) HttpStatusCode.InternalServerError, _response);
     }
 
-    [HttpPut("UpdateVilla/{id:int}")]
+    [HttpPut("{id:int}" , Name = "UpdateVilla")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -152,17 +152,17 @@ public class VillaApiController : ControllerBase
                 return BadRequest(_response);
             }
             
-            var checkVillaExistence = await _unitOfWork.Villa.GetAsync(u => u.Id == id);
-            if (checkVillaExistence == null)
+            var villaFromDb = await _unitOfWork.Villa.GetAsync(u => u.Id == id);
+            if (villaFromDb == null)
             {
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.NotFound;
                 _response.ErrorMessages.Add("No Villa found with the specified ID");
                 return NotFound(_response);
             }
-            
-            Villa model = _mapper.Map<Villa>(updateDTO);
-            await _unitOfWork.Villa.UpdateAsync(model);
+
+            _mapper.Map(updateDTO, villaFromDb);
+            await _unitOfWork.Villa.UpdateAsync(villaFromDb);
             await _unitOfWork.SaveChangesAsync();
             _response.StatusCode = HttpStatusCode.OK;
             return Ok(_response);
@@ -176,7 +176,7 @@ public class VillaApiController : ControllerBase
         return StatusCode((int)HttpStatusCode.InternalServerError, _response);
     }
 
-    [HttpPatch("UpdatePartialVilla/{id:int}")]
+    [HttpPatch("{id:int}" , Name = "UpdatePartialVilla")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -187,7 +187,7 @@ public class VillaApiController : ControllerBase
             return BadRequest();
         }
 
-        Villa? villaFromDb = await _unitOfWork.Villa.GetAsync(u => u.Id == id,false);
+        Villa? villaFromDb = await _unitOfWork.Villa.GetAsync(u => u.Id == id, tracked: false);
         if (villaFromDb == null)
         {
             return NotFound("No Villa found");
@@ -206,7 +206,7 @@ public class VillaApiController : ControllerBase
         return Ok(villaFromDb);
     }
 
-    [HttpDelete("DeleteVilla/{id:int}")]
+    [HttpDelete("{id:int}" , Name = "DeleteVilla")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

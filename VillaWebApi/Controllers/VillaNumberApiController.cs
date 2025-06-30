@@ -1,6 +1,7 @@
 using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using VillaModels.Models;
 using VillaModels.Models.DTOs.VillaNumberDTOs;
 using VillaRepository.Repository.Interfaces;
@@ -25,7 +26,7 @@ public class VillaNumberApiController : ControllerBase
         };
     }
 
-    [HttpGet("GetAllVillaNumbers")]
+    [HttpGet(Name = "GetAllVillaNumbers")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -33,7 +34,8 @@ public class VillaNumberApiController : ControllerBase
     {
         try
         {
-            List<VillaNumber> villaNumbers = await _unitOfWork.VillaNumber.GetAllAsync();
+            List<VillaNumber> villaNumbers = await _unitOfWork.VillaNumber
+                .GetAllAsync(include: i => i.Include(v => v.Villa));
             if (villaNumbers == null)
             {
                 _response.IsSuccess = false;
@@ -54,7 +56,7 @@ public class VillaNumberApiController : ControllerBase
         return StatusCode((int)HttpStatusCode.InternalServerError,_response);
     }
 
-    [HttpGet("GetVillaNumber/{id:int}")]
+    [HttpGet("{id:int}", Name = "GetVillaNumber")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -69,14 +71,15 @@ public class VillaNumberApiController : ControllerBase
                 _response.ErrorMessages.Add("Wrong ID");
                 return BadRequest(_response);
             }
-            var villaNumber = await _unitOfWork.VillaNumber.GetAsync(u => u.VillaNo == id);
+            var villaNumber = await _unitOfWork.VillaNumber
+                .GetAsync(u => u.VillaNo == id , include: i => i.Include(v => v.Villa));
             if (villaNumber == null)
             {
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.NotFound;
                 _response.ErrorMessages.Add("No villa-number found");
             }
-            _response.Result = _mapper.Map<VillaNumber>(villaNumber);
+            _response.Result = _mapper.Map<VillaNumberDTO>(villaNumber);
             _response.StatusCode = HttpStatusCode.OK;
             return Ok(_response);
         }
@@ -89,7 +92,7 @@ public class VillaNumberApiController : ControllerBase
         return StatusCode((int)HttpStatusCode.InternalServerError, _response);
     }
 
-    [HttpPost("CreateVillaNumber")]
+    [HttpPost(Name = "CreateVillaNumber")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -105,8 +108,8 @@ public class VillaNumberApiController : ControllerBase
                 return BadRequest(_response);
             }
             
-            var checkVillaExistece = await _unitOfWork.Villa.GetAsync(u => u.Id == CreateDTO.VillaId);
-            if (checkVillaExistece == null)
+            var checkVillaExistence = await _unitOfWork.Villa.GetAsync(u => u.Id == CreateDTO.VillaId);
+            if (checkVillaExistence == null)
             {
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.NotFound;
@@ -137,7 +140,7 @@ public class VillaNumberApiController : ControllerBase
         return StatusCode((int)HttpStatusCode.InternalServerError, _response);
     }
 
-    [HttpPut("UpdateVillaNumber/{id:int}")]
+    [HttpPut("{id:int}",Name = "UpdateVillaNumber")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -176,7 +179,7 @@ public class VillaNumberApiController : ControllerBase
         return StatusCode((int)HttpStatusCode.InternalServerError, _response);
     }
 
-    [HttpDelete("DeleteVillaNumber/{id:int}")]
+    [HttpDelete("{id:int}" , Name = "DeleteVillaNumber")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]

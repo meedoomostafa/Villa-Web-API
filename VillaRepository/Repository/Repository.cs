@@ -16,17 +16,24 @@ public class Repository<T> : IRepository<T> where T : class
         this.DbSet = _context.Set<T>();
     }
     
-    public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null)
+    public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null , Func<IQueryable<T>, IQueryable<T>>? include = null)
     {
         IQueryable<T> query = DbSet;
         if (filter != null)
         {
             query = query.Where(filter);
         }
+
+        if (include != null)
+        {
+            query = include(query);
+        }
         return await query.ToListAsync();
     }
 
-    public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null, bool tracked = true)
+    
+
+    public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IQueryable<T>>? include = null ,bool tracked = true )
     {
         IQueryable<T> query = DbSet;
         if (!tracked)
@@ -36,6 +43,11 @@ public class Repository<T> : IRepository<T> where T : class
         if (filter != null)
         {
             query = query.Where(filter);
+        }
+
+        if (include != null)
+        {
+            query = include(query);
         }
         return await query.FirstOrDefaultAsync();
     }

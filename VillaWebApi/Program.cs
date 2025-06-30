@@ -15,6 +15,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowMVC",
+//         builder =>
+//         {
+//             builder.WithOrigins("http://localhost:5282")
+//                 .AllowAnyHeader()
+//                 .AllowAnyMethod()
+//                 .AllowCredentials();
+//         });
+// });
 WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -23,6 +34,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// app.UseCors("AllowMVC");
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
