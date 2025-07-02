@@ -11,10 +11,12 @@ public class VillaController : Controller
 {
     private readonly IUnitOfServices  _unitOfServices;
     private readonly IMapper _mapper;
-    public VillaController(IUnitOfServices unitOfServices, IMapper mapper)
+    private readonly IWebHostEnvironment _env;
+    public VillaController(IUnitOfServices unitOfServices, IMapper mapper , IWebHostEnvironment env)
     {
         _unitOfServices = unitOfServices;
         _mapper = mapper;
+        _env = env;
     }
 
     [HttpGet]
@@ -34,12 +36,54 @@ public class VillaController : Controller
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> Create(VillaCreateDTO villa)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(VillaCreateDTO villa , IFormFile? imageFile)
     {
         if (ModelState.IsValid)
         {
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var extension = Path.GetExtension(imageFile.FileName).ToLower();
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError("Image File", "Invalid file extension.");
+                    return View(villa);
+                }
+                if (imageFile.Length > 5 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("imageFile", "Max size is 5MB.");
+                    return View(villa);
+                }
+
+                var fileName = Guid.NewGuid().ToString() + extension;
+
+                var uploadPath = Path.Combine(_env.WebRootPath, "Images");
+
+                if (!Directory.Exists(uploadPath))
+                    Directory.CreateDirectory(uploadPath);
+
+                var filePath = Path.Combine(uploadPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+
+                villa.ImageUrl = "/Images/" + fileName;
+            }
+            else
+            {
+                ModelState.AddModelError("Image File", "Please upload an image file.");
+                return View(villa);
+            }
+
+            // استدعاء الـ API
             var response = await _unitOfServices.VillaService.CreateAsync<APIResponse>(villa);
-            return RedirectToAction(nameof(Index));
+            if (response != null && response.IsSuccess)
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
         return View(villa);
     }
@@ -58,10 +102,41 @@ public class VillaController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(VillaUpdateDTO villa)
+    public async Task<IActionResult> Edit(VillaUpdateDTO villa , IFormFile? imageFile)
     {
         if (ModelState.IsValid)
         {
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var extension = Path.GetExtension(imageFile.FileName).ToLower();
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError("Image File", "Invalid file extension.");
+                    return View(villa);
+                }
+                if (imageFile.Length > 5 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("Image File", "Max file size is 5MB.");
+                    return View(villa);
+                }
+
+                var fileName = Guid.NewGuid().ToString() + extension;
+                var uploadPath = Path.Combine(_env.WebRootPath, "Images");
+
+                if (!Directory.Exists(uploadPath))
+                    Directory.CreateDirectory(uploadPath);
+
+                var filePath = Path.Combine(uploadPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+
+                villa.ImageUrl = "/Images/" + fileName;
+            }
+
             var response = await _unitOfServices.VillaService.UpdateAsync<APIResponse>(villa);
             if (response != null && response.IsSuccess)
             {
@@ -88,11 +163,32 @@ public class VillaController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirm(int id)
     {
+        var getResponse = await _unitOfServices.VillaService.GetAsync<APIResponse>(id);
+        if (getResponse == null || !getResponse.IsSuccess)
+        {
+            TempData["error"] = "Villa not found.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var villa = JsonConvert.DeserializeObject<VillaDTO>(Convert.ToString(getResponse.Result));
+
         var response = await _unitOfServices.VillaService.DeleteAsync<APIResponse>(id);
         if (response != null && response.IsSuccess)
         {
+            if (!string.IsNullOrEmpty(villa!.ImageUrl))
+            {
+                var imagePath = Path.Combine(_env.WebRootPath, villa.ImageUrl.TrimStart('/'));
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+            }
+
+            TempData["success"] = "Villa deleted successfully!";
             return RedirectToAction(nameof(Index));
         }
-        return NotFound();
+
+        TempData["error"] = "Error while deleting!";
+        return RedirectToAction(nameof(Index));
     }
 }

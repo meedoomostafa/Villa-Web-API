@@ -1,21 +1,29 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using VillaWeb.Models;
+using VillaWeb.Models.DTOs.VillaDTOs;
+using VillaWeb.Service.IService;
 
 namespace VillaWeb.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    private readonly IUnitOfServices _unitOfServices;
+    public HomeController(IUnitOfServices unitOfServices)
     {
-        _logger = logger;
+        _unitOfServices = unitOfServices;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        List<VillaDTO> villas = new List<VillaDTO>();
+        var response = await _unitOfServices.VillaService.GetAllAsync<APIResponse>();
+        if (response != null && response.IsSuccess)
+        {
+            villas = JsonConvert.DeserializeObject<List<VillaDTO>>(Convert.ToString(response.Result));
+        }
+        return View(villas);
     }
 
     public IActionResult Privacy()

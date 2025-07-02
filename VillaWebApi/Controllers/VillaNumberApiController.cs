@@ -20,10 +20,7 @@ public class VillaNumberApiController : ControllerBase
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
-        _response = new APIResponse()
-        {
-            ErrorMessages = new List<string>()
-        };
+        _response = new APIResponse() { ErrorMessages = new List<string>() };
     }
 
     [HttpGet(Name = "GetAllVillaNumbers")]

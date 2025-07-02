@@ -1,4 +1,4 @@
-@model VillaWeb.Models.DTOs.VillaDTOs.VillaCreateDTO
+@model VillaCreateDTO
 
 @{
     ViewBag.Title = "Create Villa";
@@ -40,10 +40,10 @@
             <span asp-validation-for="Sqft" class="text-danger"></span>
         </div>
 
+        <!-- تم استبداله: رفع ملف الصورة -->
         <div class="form-group mb-3">
-            <label asp-for="ImageUrl" class="form-label"></label>
-            <input asp-for="ImageUrl" type="text" class="form-control" placeholder="Enter image URL" />
-            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            <label class="form-label">Upload Image</label>
+            <input type="file" name="ImageFile" class="form-control" />
         </div>
 
         <div class="form-group mb-3">

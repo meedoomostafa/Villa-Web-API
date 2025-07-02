@@ -25,6 +25,11 @@ public class VillaNumberModelConfigurations : IEntityTypeConfiguration<VillaNumb
         builder.Property(d => d.VillaId).IsRequired(false);
         
         builder.HasOne(vn => vn.Villa)
-            .WithMany(v => v.VillaNumber).HasForeignKey(vn => vn.VillaId);
+            .WithMany(v => v.VillaNumber)
+            .HasForeignKey(vn => vn.VillaId);
+        
+        builder.HasMany(vn => vn.Booking)
+            .WithOne(b => b.VillaNumber)
+            .HasForeignKey(b => b.VillaNumberId);
     }
 }

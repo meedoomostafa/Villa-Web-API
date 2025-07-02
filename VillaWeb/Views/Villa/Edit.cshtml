@@ -41,17 +41,23 @@
             <span asp-validation-for="Sqft" class="text-danger"></span>
         </div>
 
-        <div class="form-group mb-3">
-            <label asp-for="ImageUrl" class="form-label"></label>
-            <input asp-for="ImageUrl" type="text" class="form-control" placeholder="Enter image URL" />
-            <span asp-validation-for="ImageUrl" class="text-danger"></span>
-            @if (!string.IsNullOrEmpty(Model.ImageUrl))
-            {
-                <div class="mt-2">
+        <!-- ✅ الصورة الحالية -->
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div class="form-group mb-3">
+                <label class="form-label">Current Image</label>
+                <div class="mb-2">
                     <img src="@Model.ImageUrl" alt="Villa Image" class="img-fluid" style="max-width: 200px;" />
                 </div>
-            }
+            </div>
+        }
+
+        <div class="form-group mb-3">
+            <label class="form-label">Upload New Image (optional)</label>
+            <input type="file" name="ImageFile" class="form-control" />
         </div>
+
+        <input type="hidden" asp-for="ImageUrl" />
 
         <div class="form-group mb-3">
             <label asp-for="Amenity" class="form-label"></label>

@@ -1,8 +1,70 @@
-﻿@{
+﻿@model List<VillaDTO>
+
+@{
     ViewData["Title"] = "Home Page";
+    Layout = "_Layout";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="text-primary"><i class="fas fa-home me-2"></i>Welcome to VillaWeb</h1>
+        <p class="lead text-muted">Discover our luxurious villas for your perfect getaway.</p>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var villa in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(villa.ImageUrl))
+                        {
+                            <img src="@villa.ImageUrl" class="card-img-top" alt="@villa.Name" style="height: 200px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="No Image" style="height: 200px; object-fit: cover;" />
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-tag me-1"></i>@villa.Name</h5>
+                            <p class="card-text text-muted">@(villa.Details.Length > 100 ? villa.Details.Substring(0, 100) + "..." : villa.Details)</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-dollar-sign me-1"></i><strong>Rate:</strong> @villa.Rate.ToString("C")/night</li>
+                                <li><i class="fas fa-users me-1"></i><strong>Occupancy:</strong> @villa.Occupancy</li>
+                                <li><i class="fas fa-ruler-combined me-1"></i><strong>Sqft:</strong> @villa.Sqft</li>
+                                @if (!string.IsNullOrEmpty(villa.Amenity))
+                                {
+                                    <li><i class="fas fa-star me-1"></i><strong>Amenities:</strong> @villa.Amenity</li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-white border-0">
+                            <a asp-controller="Villa" asp-action="Details" asp-route-id="@villa.Id" class="btn btn-primary w-100">
+                                <i class="fas fa-info-circle me-1"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center">
+            <p class="text-muted"><i class="fas fa-exclamation-circle me-1"></i>No villas available at the moment.</p>
+        </div>
+    }
 </div>
+
+@section Scripts {
+    <script>
+        // Initialize Bootstrap tooltips (if needed)
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+}

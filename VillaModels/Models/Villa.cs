@@ -1,5 +1,5 @@
 namespace VillaModels.Models;
-public class Villa
+public sealed class Villa
 {
     public int Id { get; set; }
     public string Name { get; set; }

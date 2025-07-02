@@ -1,5 +1,6 @@
 using System.Net;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using VillaModels.Models;
@@ -11,6 +12,7 @@ namespace VillaWebApi.Controllers;
 // [Route("api/[controller]")]
 [Route("api/VillaApi")]
 [ApiController]
+[Authorize]
 public class VillaApiController : ControllerBase
 {
     protected APIResponse _response;
@@ -21,10 +23,7 @@ public class VillaApiController : ControllerBase
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
-        this._response = new APIResponse()
-        {
-            ErrorMessages = new List<string>()
-        };
+        this._response = new APIResponse() { ErrorMessages = new List<string>() };
     }
 
     [HttpGet(Name = "GetAllVillas")]
