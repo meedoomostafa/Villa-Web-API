@@ -1,10 +1,8 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using VillaWeb.Models;
-using VillaWeb.Models.DTOs.VillaDTOs;
 using VillaWeb.Models.DTOs.VillaNumberDTOs;
+using VillaWeb.Models.ResponseTypes;
 using VillaWeb.Service.IService;
 
 namespace VillaWeb.Controllers;
@@ -23,7 +21,8 @@ public class VillaNumberController  : Controller
     public async Task<IActionResult> Index()
     {
         List<VillaNumberDTO> villasNumber = new List<VillaNumberDTO>();
-        var response = await _unitOfServices.VillaNumberService.GetAllAsync<APIResponse>();
+        var token = Request.Cookies["AuthToken"];
+        var response = await _unitOfServices.VillaNumberService.GetAllAsync<APIResponse>(token!);
         if (response != null && response.IsSuccess)
         {
             villasNumber = JsonConvert.DeserializeObject<List<VillaNumberDTO>>(Convert.ToString(response.Result));
@@ -35,7 +34,8 @@ public class VillaNumberController  : Controller
     public async Task<IActionResult> Edit(int id)
     {
         var villa = new  VillaNumberDTO();
-        var response = await _unitOfServices.VillaNumberService.GetAsync<APIResponse>(id);
+        var token = Request.Cookies["AuthToken"];
+        var response = await _unitOfServices.VillaNumberService.GetAsync<APIResponse>(id,token!);
         if (response != null && response.IsSuccess)
         {
             villa = JsonConvert.DeserializeObject<VillaNumberDTO>(Convert.ToString(response.Result));
@@ -49,7 +49,8 @@ public class VillaNumberController  : Controller
     {
         if (ModelState.IsValid)
         {
-            var response = await _unitOfServices.VillaNumberService.UpdateAsync<APIResponse>(villa);
+            var token = Request.Cookies["AuthToken"];
+            var response = await _unitOfServices.VillaNumberService.UpdateAsync<APIResponse>(villa,token!);
             if (response != null && response.IsSuccess)
             {
                 return RedirectToAction(nameof(Index));
@@ -68,7 +69,8 @@ public class VillaNumberController  : Controller
     {
         if (ModelState.IsValid)
         {
-            var response = await _unitOfServices.VillaNumberService.CreateAsync<APIResponse>(villa);
+            var token = Request.Cookies["AuthToken"];
+            var response = await _unitOfServices.VillaNumberService.CreateAsync<APIResponse>(villa,token!);
             if (response != null && response.IsSuccess)
             {
                 return RedirectToAction(nameof(Index));
@@ -81,7 +83,8 @@ public class VillaNumberController  : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var villaNumber = new VillaNumberDTO();
-        var response = await _unitOfServices.VillaNumberService.GetAsync<APIResponse>(id);
+        var token = Request.Cookies["AuthToken"];
+        var response = await _unitOfServices.VillaNumberService.GetAsync<APIResponse>(id,token!);
         if (response != null && response.IsSuccess)
         {
             villaNumber = JsonConvert.DeserializeObject<VillaNumberDTO>(Convert.ToString(response.Result));
@@ -92,7 +95,8 @@ public class VillaNumberController  : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirm(int id)
     {
-        var response = await _unitOfServices.VillaNumberService.DeleteAsync<APIResponse>(id);
+        var token = Request.Cookies["AuthToken"];
+        var response = await _unitOfServices.VillaNumberService.DeleteAsync<APIResponse>(id,token!);
         if (response != null && response.IsSuccess)
         {
             return RedirectToAction(nameof(Index));

@@ -2,7 +2,7 @@ using System.Net;
 
 namespace VillaModels.Models;
 
-public sealed class APIResponse
+public class APIResponse
 {
     public HttpStatusCode StatusCode { get; set; }
     public bool IsSuccess { get; set; } = true;

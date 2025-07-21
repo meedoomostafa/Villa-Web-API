@@ -1,5 +1,6 @@
 using System.Net;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VillaModels.Models;
@@ -10,6 +11,7 @@ namespace VillaWebApi.Controllers;
 
 [Route("api/VillaNumberApi")]
 [ApiController]
+[Authorize]
 public class VillaNumberApiController : ControllerBase
 {
     protected APIResponse _response;

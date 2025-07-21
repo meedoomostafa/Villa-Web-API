@@ -11,4 +11,5 @@ public static class SD
     }
     public static string VillaApiBase = "/api/VillaApi";
     public static string VillaApiNumberBase = "/api/VillaNumberApi";
+    public static string VillaApiAuthenticationBase = "/api/Account";
 }

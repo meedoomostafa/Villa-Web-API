@@ -120,7 +120,7 @@ public class AccountController : ControllerBase
                 Token = jwt,
                 Expiration = token.ValidTo,
                 UserName = user.UserName!,
-                Email = user.Email!
+                Email = user.Email!,
             };
             
             _response.StatusCode = HttpStatusCode.OK;

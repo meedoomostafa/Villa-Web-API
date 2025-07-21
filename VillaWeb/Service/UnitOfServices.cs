@@ -5,16 +5,17 @@ namespace VillaWeb.Service;
 public class UnitOfServices : IUnitOfServices
 {
     private readonly IHttpClientFactory _httpClient;
-    private readonly IConfiguration _configuration;
     
     public IVillaService VillaService { get; private set; }
     public IVillaNumberService VillaNumberService { get; private set; }
+    public IAuthenticationService AuthenticationService { get; private set; }
 
     
-    public UnitOfServices(IHttpClientFactory httpClient , IConfiguration configuration)
+    public UnitOfServices(IHttpClientFactory httpClient , IConfiguration configuration , IHttpContextAccessor httpContextAccessor)
     {
         _httpClient = httpClient;
-        VillaService = new VillaService(httpClient,configuration);
-        VillaNumberService = new VillaNumberService(httpClient,configuration);
+        VillaService = new VillaService(httpClient,configuration,httpContextAccessor);
+        VillaNumberService = new VillaNumberService(httpClient,configuration,httpContextAccessor);
+        AuthenticationService = new AuthenticationService(httpClient,configuration,httpContextAccessor);
     }
 }

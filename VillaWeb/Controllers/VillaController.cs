@@ -1,8 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using VillaWeb.Models;
 using VillaWeb.Models.DTOs.VillaDTOs;
+using VillaWeb.Models.ResponseTypes;
 using VillaWeb.Service.IService;
 
 namespace VillaWeb.Controllers;
@@ -23,7 +23,8 @@ public class VillaController : Controller
     public async Task<IActionResult> Index()
     {
         List<VillaDTO> list = new List<VillaDTO>();
-        var response = await _unitOfServices.VillaService.GetAllAsync<APIResponse>();
+        var token = Request.Cookies["AuthToken"];
+        var response = await _unitOfServices.VillaService.GetAllAsync<APIResponse>(token!);
         if (response != null && response.IsSuccess)
         {
             list = JsonConvert.DeserializeObject<List<VillaDTO>>(Convert.ToString(response.Result));
@@ -77,9 +78,9 @@ public class VillaController : Controller
                 ModelState.AddModelError("Image File", "Please upload an image file.");
                 return View(villa);
             }
-
-            // استدعاء الـ API
-            var response = await _unitOfServices.VillaService.CreateAsync<APIResponse>(villa);
+            
+            var token = Request.Cookies["AuthToken"];
+            var response = await _unitOfServices.VillaService.CreateAsync<APIResponse>(villa,token!);
             if (response != null && response.IsSuccess)
             {
                 return RedirectToAction(nameof(Index));
@@ -92,7 +93,8 @@ public class VillaController : Controller
     public async Task<IActionResult> Edit(int id)
     {
         VillaDTO villa = new VillaDTO();
-        var response = await _unitOfServices.VillaService.GetAsync<APIResponse>(id);
+        var token = Request.Cookies["AuthToken"];
+        var response = await _unitOfServices.VillaService.GetAsync<APIResponse>(id,token!);
         if (response != null && response.IsSuccess)
         {
             villa = JsonConvert.DeserializeObject<VillaDTO>(Convert.ToString(response.Result));
@@ -136,8 +138,9 @@ public class VillaController : Controller
 
                 villa.ImageUrl = "/Images/" + fileName;
             }
-
-            var response = await _unitOfServices.VillaService.UpdateAsync<APIResponse>(villa);
+            
+            var token = Request.Cookies["AuthToken"];
+            var response = await _unitOfServices.VillaService.UpdateAsync<APIResponse>(villa,token!);
             if (response != null && response.IsSuccess)
             {
                 return RedirectToAction(nameof(Index));
@@ -150,7 +153,8 @@ public class VillaController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         VillaDTO villa = new VillaDTO();
-        var response = await _unitOfServices.VillaService.GetAsync<APIResponse>(id);
+        var token = Request.Cookies["AuthToken"];
+        var response = await _unitOfServices.VillaService.GetAsync<APIResponse>(id,token!);
         if (response != null && response.IsSuccess)
         {
             villa = JsonConvert.DeserializeObject<VillaDTO>(Convert.ToString(response.Result));
@@ -163,7 +167,8 @@ public class VillaController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirm(int id)
     {
-        var getResponse = await _unitOfServices.VillaService.GetAsync<APIResponse>(id);
+        var token = Request.Cookies["AuthToken"];
+        var getResponse = await _unitOfServices.VillaService.GetAsync<APIResponse>(id,token!);
         if (getResponse == null || !getResponse.IsSuccess)
         {
             TempData["error"] = "Villa not found.";
@@ -172,7 +177,7 @@ public class VillaController : Controller
 
         var villa = JsonConvert.DeserializeObject<VillaDTO>(Convert.ToString(getResponse.Result));
 
-        var response = await _unitOfServices.VillaService.DeleteAsync<APIResponse>(id);
+        var response = await _unitOfServices.VillaService.DeleteAsync<APIResponse>(id,token!);
         if (response != null && response.IsSuccess)
         {
             if (!string.IsNullOrEmpty(villa!.ImageUrl))

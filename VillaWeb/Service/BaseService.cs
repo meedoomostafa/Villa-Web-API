@@ -1,7 +1,9 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
-using VillaWeb.Models;
+using VillaWeb.Models.Requests;
+using VillaWeb.Models.ResponseTypes;
 using VillaWeb.Service.IService;
 using VillaWebUtility;
 
@@ -11,14 +13,16 @@ public class BaseService : IBaseService
 {
     public APIResponse responseModel { get; set; }
     public IHttpClientFactory _httpClient { get; set; }
+    public IHttpContextAccessor _httpContextAccessor { get; set; }
 
-    public BaseService(IHttpClientFactory httpClient)
+    public BaseService(IHttpClientFactory httpClient, IHttpContextAccessor httpContextAccessor)
     {
         this.responseModel = new APIResponse();
         this._httpClient = httpClient;
+        this._httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<T> SendAsync<T>(APIRequest apiRequest) where T : APIResponse , new()
+    public async Task<T> SendAsync<T>(APIRequest apiRequest) where T : APIResponse, new()
     {
         try
         {
@@ -31,6 +35,11 @@ public class BaseService : IBaseService
             }
 
             using var client = _httpClient.CreateClient(nameof(IVillaService));
+            // var token = _httpContextAccessor.HttpContext!.Request.Headers["AccessToken"];
+            // if (string.IsNullOrWhiteSpace(token))
+            // {
+            //     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            // }
             using var message = new HttpRequestMessage();
             
             message.Headers.Add("Accept", "application/json");
@@ -42,6 +51,12 @@ public class BaseService : IBaseService
                     JsonConvert.SerializeObject(apiRequest.Data),
                     Encoding.UTF8,
                     "application/json");
+            }
+
+            if (!string.IsNullOrWhiteSpace(apiRequest.Token))
+            {
+                client.DefaultRequestHeaders.Authorization = 
+                    new AuthenticationHeaderValue("Bearer", apiRequest.Token);
             }
 
             message.Method = apiRequest.ApiType switch

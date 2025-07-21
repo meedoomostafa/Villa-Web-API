@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using VillaWeb.Models;
 using VillaWeb.Models.DTOs.VillaDTOs;
+using VillaWeb.Models.ResponseTypes;
 using VillaWeb.Service.IService;
 
 namespace VillaWeb.Controllers;
@@ -18,7 +19,8 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         List<VillaDTO> villas = new List<VillaDTO>();
-        var response = await _unitOfServices.VillaService.GetAllAsync<APIResponse>();
+        var token = Request.Cookies["AuthToken"];
+        var response = await _unitOfServices.VillaService.GetAllAsync<APIResponse>(token!);
         if (response != null && response.IsSuccess)
         {
             villas = JsonConvert.DeserializeObject<List<VillaDTO>>(Convert.ToString(response.Result));

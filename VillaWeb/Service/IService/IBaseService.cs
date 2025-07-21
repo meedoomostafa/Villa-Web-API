@@ -1,4 +1,5 @@
-using VillaWeb.Models;
+using VillaWeb.Models.Requests;
+using VillaWeb.Models.ResponseTypes;
 
 namespace VillaWeb.Service.IService;
 
