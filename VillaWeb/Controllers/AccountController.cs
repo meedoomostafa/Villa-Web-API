@@ -77,4 +77,10 @@ public class AccountController : Controller
         }   
         return View(login);
     }
+    [HttpGet]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete("AuthToken");
+        return RedirectToAction(nameof(Login));
+    }
 }

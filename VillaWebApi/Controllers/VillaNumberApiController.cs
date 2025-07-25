@@ -9,9 +9,9 @@ using VillaRepository.Repository.Interfaces;
 
 namespace VillaWebApi.Controllers;
 
-[Route("api/VillaNumberApi")]
+[Route("api/[controller]")]
 [ApiController]
-[Authorize]
+// [Authorize]
 public class VillaNumberApiController : ControllerBase
 {
     protected APIResponse _response;

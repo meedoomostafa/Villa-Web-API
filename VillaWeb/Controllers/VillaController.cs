@@ -196,4 +196,19 @@ public class VillaController : Controller
         TempData["error"] = "Error while deleting!";
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Details(int id)
+    {
+        var villa = new  VillaDTO();
+        
+        var token = Request.Cookies["AuthToken"];
+        var response = await _unitOfServices.VillaService.GetAsync<APIResponse>(id,token!);
+        if (response != null && response.IsSuccess)
+        {
+            villa = JsonConvert.DeserializeObject<VillaDTO>(Convert.ToString(response.Result)!);
+            return View(villa);
+        }
+        return NotFound();
+    }
 }

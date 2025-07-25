@@ -10,9 +10,9 @@ using VillaRepository.Repository.Interfaces;
 namespace VillaWebApi.Controllers;
 
 // [Route("api/[controller]")]
-[Route("api/VillaApi")]
+[Route("api/[controller]")]
 [ApiController]
-[Authorize]
+// [Authorize]
 public class VillaApiController : ControllerBase
 {
     protected APIResponse _response;
@@ -26,6 +26,7 @@ public class VillaApiController : ControllerBase
         this._response = new APIResponse() { ErrorMessages = new List<string>() };
     }
 
+    [AllowAnonymous]
     [HttpGet(Name = "GetAllVillas")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

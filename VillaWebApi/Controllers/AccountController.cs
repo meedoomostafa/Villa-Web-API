@@ -11,7 +11,7 @@ using VillaModels.Models.DTOs.AuthenticationDTOs;
 
 namespace VillaWebApi.Controllers;
 
-[Route("api/Account")]
+[Route("api/[controller]")]
 [ApiController]
 public class AccountController : ControllerBase
 {
