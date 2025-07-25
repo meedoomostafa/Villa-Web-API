@@ -1,5 +1,6 @@
 using System.Net;
 using AutoMapper;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VillaModels.Models;
@@ -89,7 +90,7 @@ public class BookingController : ControllerBase
         return StatusCode((int)_response.StatusCode, _response);
     }
 
-    [HttpPost]
+    [HttpPost(Name = "CreateBooking")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -111,6 +112,26 @@ public class BookingController : ControllerBase
                 _response.ErrorMessages.Add("Invalid Data entered");
                 return BadRequest(_response);
             }
+
+            var checkVillaNumberExistence = await _unitOfWork.VillaNumber
+                .GetAsync(q => q.VillaNo == booking.VillaNumberId);
+            if (checkVillaNumberExistence == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add("Villa Number not found");
+                return NotFound(_response);
+            }
+            var (isValid , errorMessage) = 
+                await CheckBookingValidityAsync(0,booking.VillaNumberId,booking.StartDate, booking.EndDate);
+            if (!isValid)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode =  HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add(errorMessage);
+                return BadRequest(_response);
+            }
+            
             var bookingEntity = _mapper.Map<Booking>(booking);
             await _unitOfWork.Booking.CreateAsync(bookingEntity);
             await _unitOfWork.SaveChangesAsync();
@@ -126,7 +147,7 @@ public class BookingController : ControllerBase
         return StatusCode((int)_response.StatusCode, _response);
     }
 
-    [HttpPut]
+    [HttpPut(Name = "UpdateBooking")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -140,6 +161,17 @@ public class BookingController : ControllerBase
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.ErrorMessages.Add("Incorrect Id");
+                return BadRequest(_response);
+            }
+            
+            var (isValid,errorMessage) = 
+                await CheckBookingValidityAsync(booking.Id, booking.VillaNumberId ,booking.StartDate, booking.EndDate);
+
+            if (!isValid)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add(errorMessage);
                 return BadRequest(_response);
             }
 
@@ -168,7 +200,7 @@ public class BookingController : ControllerBase
         return StatusCode((int)_response.StatusCode, _response);
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}" , Name = "DeleteBooking")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -195,5 +227,32 @@ public class BookingController : ControllerBase
         await _unitOfWork.SaveChangesAsync();
         _response.StatusCode = HttpStatusCode.OK;
         return Ok(_response);
+    }
+
+    private async Task<(bool IsVaild, string ErrorMessage)>
+        CheckBookingValidityAsync(int id, int villaNumberId, DateTime newStartDate, DateTime newEndDate)
+    {
+        if (newStartDate >= newEndDate)
+        {
+            return (false,"End-Date must be After Start Date");
+        }
+
+        if (newStartDate.Date < DateTime.Today)
+        {
+            return (false,"Start Date must be Today or Later");
+        }
+
+        var overlappingBookings = await _unitOfWork.Booking.GetAllAsync(filter:
+            b => b.Id != id
+                 && b.VillaNumberId == villaNumberId
+                 && b.StartDate < newEndDate
+                 && b.EndDate > newStartDate);
+
+        if (overlappingBookings.Any())
+        {
+            return (false , "This villa is already booked for selected dates");
+        }
+        
+        return (true , string.Empty);
     }
 }
