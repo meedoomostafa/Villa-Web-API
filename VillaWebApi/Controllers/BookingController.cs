@@ -1,18 +1,18 @@
 using System.Net;
 using AutoMapper;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VillaModels.Models;
 using VillaModels.Models.DTOs.BookingDTOs;
 using VillaRepository.Repository.Interfaces;
+using VillaWebApiUtilities;
 
 namespace VillaWebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-// [Authorize]
+[Authorize(Roles = ApplicationRoles.CompanyRoleName)]
 public class BookingController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
