@@ -1,5 +1,6 @@
 using AutoMapper;
 using VillaModels.Models;
+using VillaModels.Models.DTOs.AdminManagementDTOs;
 using VillaModels.Models.DTOs.AuthenticationDTOs;
 using VillaModels.Models.DTOs.BookingDTOs;
 using VillaModels.Models.DTOs.VillaDTOs;
@@ -33,6 +34,11 @@ public sealed class MappingConfig : Profile
                 opt => opt.MapFrom(src => src.VillaNumber.Villa.ImageUrl));
         CreateMap<Booking, BookingCreateDTO>().ReverseMap();
         CreateMap<Booking, BookingUpdateDTO>().ReverseMap();
+        
+        CreateMap<Company, CompanyDTO>().ReverseMap();
+        CreateMap<Company, CompanyCreateDTO>().ReverseMap();
+        CreateMap<Company, CompanyUpdateDTO>().ReverseMap();
+        CreateMap<Company, PendingCompanyDTO>();
 
         CreateMap<RegisterDTO, ApplicationUser>()
             .ForMember(dest => dest.DateOfBirth,
