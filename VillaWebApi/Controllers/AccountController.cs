@@ -20,14 +20,16 @@ namespace VillaWebApi.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
     private readonly APIResponse _response;
     private readonly IUnitOfWork _unitOfWork;
 
-    public AccountController(UserManager<ApplicationUser> userManager, IConfiguration configuration, IMapper mapper , IUnitOfWork unitOfWork)
+    public AccountController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager , IConfiguration configuration, IMapper mapper , IUnitOfWork unitOfWork )
     {
         _userManager = userManager;
+        _roleManager = roleManager;
         _configuration = configuration;
         _mapper = mapper;
         _unitOfWork = unitOfWork;
@@ -51,10 +53,19 @@ public class AccountController : ControllerBase
                 return BadRequest(_response);
             }
             
+            if (!await _roleManager.RoleExistsAsync(registerDTO.Role))
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Invalid role specified.");
+                return BadRequest(_response);
+            }
+            
             var user = _mapper.Map<ApplicationUser>(registerDTO);
             var result = await _userManager.CreateAsync(user, registerDTO.Password);
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user,registerDTO.Role);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = $"User {user.UserName} Registered Successfully.";
                 return Ok(_response);
@@ -108,6 +119,7 @@ public class AccountController : ControllerBase
                 RefreshTokenExpiration = refreshToken.ExpiresAt,
                 UserName = user.UserName!,
                 Email = user.Email!,
+                Role = roles.FirstOrDefault() ?? ""
             };
             
             _response.StatusCode = HttpStatusCode.OK;
@@ -122,34 +134,55 @@ public class AccountController : ControllerBase
         }
     }
     [HttpPost("RefreshToken")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Refresh([FromBody] RefreshRequest model)
     {
-        var stored = await _unitOfWork.RefreshTokens
-            .GetAsync(t => t.Token == model.RefreshToken);
-
-        if (stored == null || stored.IsRevoked || stored.ExpiresAt < DateTime.UtcNow)
-            return Unauthorized();
-
-        var user = await _userManager.FindByIdAsync(stored.UserId.ToString());
-        if (user == null) return Unauthorized();
-
-        stored.IsRevoked = true;
-        await _unitOfWork.SaveChangesAsync();
-
-        var (newJwt, newJwtToken) = await GenerateJwtAccessToken(user, await _userManager.GetRolesAsync(user));
-        var newRefresh = await GenerateRefreshToken(user.Id, newJwtToken.Id);
-        await _unitOfWork.RefreshTokens.CreateAsync(newRefresh);
-        await _unitOfWork.SaveChangesAsync();
-
-        return Ok(new LoginResponse
+        try
         {
-            AccessToken = newJwt,
-            AccessTokenExpiration = newJwtToken.ValidTo,
-            RefreshToken = newRefresh.Token,
-            RefreshTokenExpiration = newRefresh.ExpiresAt,
-            UserName = user.UserName!,
-            Email = user.Email!
-        });
+            var stored = await _unitOfWork.RefreshTokens
+                .GetAsync(t => t.Token == model.RefreshToken);
+
+            if (stored == null || stored.IsRevoked || stored.ExpiresAt < DateTime.UtcNow)
+            {
+                return Unauthorized();
+            }
+
+            var user = await _userManager.FindByIdAsync(stored.UserId.ToString());
+            if (user == null)
+            {
+                return Unauthorized();
+            } 
+
+            stored.IsRevoked = true;
+            await _unitOfWork.RefreshTokens.UpdateAsync(stored);
+            await _unitOfWork.SaveChangesAsync();
+
+            var (newJwt, newJwtToken) = await GenerateJwtAccessToken(user, await _userManager.GetRolesAsync(user));
+            var newRefresh = await GenerateRefreshToken(user.Id, newJwtToken.Id);
+            await _unitOfWork.RefreshTokens.CreateAsync(newRefresh);
+            await _unitOfWork.SaveChangesAsync();
+
+            var loginResponse = new LoginResponse()
+            {
+                AccessToken = newJwt,
+                AccessTokenExpiration = newJwtToken.ValidTo,
+                RefreshToken = newRefresh.Token,
+                RefreshTokenExpiration = newRefresh.ExpiresAt,
+                UserName = user.UserName!,
+                Email = user.Email!
+            };
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = loginResponse;
+            return Ok(_response);
+        }
+        catch (Exception ex)
+        {
+            _response.IsSuccess = false;
+            _response.StatusCode = HttpStatusCode.InternalServerError;
+            _response.ErrorMessages.Add(ex.Message);
+        }
+        return StatusCode((int)HttpStatusCode.InternalServerError, _response);
     }
 
     private async Task<(string token , JwtSecurityToken jwtToken)> GenerateJwtAccessToken(ApplicationUser user, IList<string> roles)

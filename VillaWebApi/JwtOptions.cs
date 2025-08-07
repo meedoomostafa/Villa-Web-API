@@ -2,8 +2,8 @@ namespace VillaWebApi;
 
 public class JwtOptions
 {
-    string Key { get; set; }
-    string Issuer { get; set; }
-    string Audience { get; set; }
-    int LifeTime { get; set; }
+    public string Key { get; set; }
+    public string Issuer { get; set; }
+    public string Audience { get; set; }
+    public int LifeTime { get; set; }
 }
