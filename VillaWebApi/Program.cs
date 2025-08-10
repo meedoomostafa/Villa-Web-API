@@ -8,6 +8,7 @@ using VillaModels.Models;
 using VillaRepository.Data;
 using VillaRepository.Repository;
 using VillaRepository.Repository.Interfaces;
+using VillaRepository.Seeder;
 using VillaWebApi;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

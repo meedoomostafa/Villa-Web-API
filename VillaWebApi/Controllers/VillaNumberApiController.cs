@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using VillaModels.Models;
 using VillaModels.Models.DTOs.VillaNumberDTOs;
 using VillaRepository.Repository.Interfaces;
+using VillaWebApiUtilities;
 
 namespace VillaWebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+//[Authorize(Roles = ApplicationRoles.CompanyRoleName)]
 public class VillaNumberApiController : ControllerBase
 {
     protected APIResponse _response;
@@ -71,7 +72,7 @@ public class VillaNumberApiController : ControllerBase
                 return BadRequest(_response);
             }
             var villaNumber = await _unitOfWork.VillaNumber
-                .GetAsync(u => u.VillaNo == id , include: i => i.Include(v => v.Villa));
+                .GetAsync(u => u.Id == id , include: i => i.Include(v => v.Villa));
             if (villaNumber == null)
             {
                 _response.IsSuccess = false;
@@ -117,7 +118,7 @@ public class VillaNumberApiController : ControllerBase
             }
             
             var checkVillaNumberExistence = await _unitOfWork.VillaNumber
-                .GetAsync(u => u.VillaNo  == CreateDTO.VillaNo);
+                .GetAsync(u => u.Id  == CreateDTO.Id);
             if (checkVillaNumberExistence != null)
             {
                 ModelState.AddModelError("Name", "Villa number already exists");
@@ -128,7 +129,7 @@ public class VillaNumberApiController : ControllerBase
             await _unitOfWork.VillaNumber.CreateAsync(villaNumber);
             await _unitOfWork.SaveChangesAsync();
             _response.StatusCode = HttpStatusCode.Created;
-            return CreatedAtAction("GetVillaNumber" , new {id = villaNumber.VillaNo} , _response);
+            return CreatedAtAction("GetVillaNumber" , new {id = villaNumber.Id} , _response);
         }
         catch (Exception e)
         {
@@ -147,7 +148,7 @@ public class VillaNumberApiController : ControllerBase
     {
         try
         {
-            if (id == 0 || UpdateDTO == null || UpdateDTO.VillaNo != id)
+            if (id == 0 || UpdateDTO == null || UpdateDTO.Id != id)
             {
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -194,7 +195,7 @@ public class VillaNumberApiController : ControllerBase
                 return BadRequest(_response);
             }
         
-            var villaNumber = await _unitOfWork.VillaNumber.GetAsync(u => u.VillaNo == id);
+            var villaNumber = await _unitOfWork.VillaNumber.GetAsync(u => u.Id == id);
             if (villaNumber == null)
             {
                 _response.IsSuccess = false;
@@ -202,6 +203,8 @@ public class VillaNumberApiController : ControllerBase
                 _response.ErrorMessages.Add("No villa-number found");
                 return NotFound(_response);
             }
+
+            await _unitOfWork.Booking.DeleteAllAsync();
             await _unitOfWork.VillaNumber.RemoveAsync(villaNumber);
             await _unitOfWork.SaveChangesAsync();
             _response.StatusCode = HttpStatusCode.NoContent;

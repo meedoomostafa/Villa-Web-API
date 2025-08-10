@@ -1,6 +1,5 @@
 using AutoMapper;
 using VillaModels.Models;
-using VillaModels.Models.DTOs.AdminManagementDTOs;
 using VillaModels.Models.DTOs.AuthenticationDTOs;
 using VillaModels.Models.DTOs.BookingDTOs;
 using VillaModels.Models.DTOs.VillaDTOs;
@@ -22,28 +21,36 @@ public sealed class MappingConfig : Profile
         CreateMap<VillaNumber, VillaNumberCreateDTO>().ReverseMap();
         
         CreateMap<Booking, BookingDTO>()
-            .ForMember(dest => dest.UserFullName,
-                opt => opt.MapFrom(src => src.ApplicationUser.FirstName + " " + src.ApplicationUser.LastName))
+            .ForMember(dest => dest.CustomerFullName,
+                opt => opt.MapFrom(src => src.Customer.FullName))
             .ForMember(dest => dest.VillaSpecialDetails,
-                opt => opt.MapFrom(src => src.VillaNumber.SpetialDeatils))
+                opt => opt.MapFrom(src => src.VillaNumber.SpecialDetails))
             .ForMember(dest => dest.VillaName,
                 opt => opt.MapFrom(src => src.VillaNumber.Villa.Name))
             .ForMember(dest => dest.VillaRate,
-                opt => opt.MapFrom(src => src.VillaNumber.Villa.rate))
+                opt => opt.MapFrom(src => src.VillaNumber.Villa.Rate))
             .ForMember(dest => dest.VillaImageUrl,
                 opt => opt.MapFrom(src => src.VillaNumber.Villa.ImageUrl));
         CreateMap<Booking, BookingCreateDTO>().ReverseMap();
         CreateMap<Booking, BookingUpdateDTO>().ReverseMap();
         
-        CreateMap<Company, CompanyDTO>().ReverseMap();
-        CreateMap<Company, CompanyCreateDTO>().ReverseMap();
-        CreateMap<Company, CompanyUpdateDTO>().ReverseMap();
-        CreateMap<Company, PendingCompanyDTO>();
 
-        CreateMap<RegisterDTO, ApplicationUser>()
+        CreateMap<RegisterCustomerDTO,Customer>()
             .ForMember(dest => dest.DateOfBirth,
                 opt => opt.MapFrom(src => src.BirthOfDate ?? DateTime.MinValue))
+            .ForMember(dest => dest.Address,opt => opt.MapFrom(src => src.Address))
+            .ForMember(dest => dest.FullName , opt => opt.MapFrom(src => src.FullName))
             .ReverseMap();
+
+        CreateMap<RegisterCompanyDTO, Company>()
+            .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.CompanyName))
+            .ForMember(dest => dest.CommercialRegistrationDocUrl,
+                opt => opt.MapFrom(src => src.CommercialRegistrationDocUrl))
+            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+            .ReverseMap();
+
+        CreateMap<ApplicationUser, RegisterCustomerDTO>().ReverseMap();
+        CreateMap<ApplicationUser, RegisterCompanyDTO>().ReverseMap();
     }
 }
  

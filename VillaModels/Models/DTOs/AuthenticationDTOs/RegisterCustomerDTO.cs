@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VillaModels.Models.DTOs.AuthenticationDTOs;
 
-public class RegisterDTO
+public sealed class RegisterCustomerDTO
 {
     [Required]
     [StringLength(30, MinimumLength = 3)]
@@ -32,6 +32,8 @@ public class RegisterDTO
     public string? PhoneNumber { get; set; }
 
     public string? Address { get; set; }
+    
+    public string Role { get; set; }
     
     public DateTime? BirthOfDate { get; set; }
 }
