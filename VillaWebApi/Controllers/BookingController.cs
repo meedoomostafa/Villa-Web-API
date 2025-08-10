@@ -12,7 +12,7 @@ namespace VillaWebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = ApplicationRoles.CompanyRoleName)]
+// [Authorize(Roles = ApplicationRoles.CompanyRoleName)]
 public class BookingController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -35,7 +35,7 @@ public class BookingController : ControllerBase
         try
         {
             var bookings = await _unitOfWork.Booking
-                .GetAllAsync(include: q => q.Include(b => b.ApplicationUser)
+                .GetAllAsync(include: q => q.Include(b => b.Customer)
                     .Include(b => b.VillaNumber)
                     .ThenInclude(v => v.Villa));
             
@@ -68,7 +68,7 @@ public class BookingController : ControllerBase
         try
         {
             var booking = await _unitOfWork.Booking
-                .GetAsync(b => b.Id == id,include: q => q.Include(b => b.ApplicationUser)
+                .GetAsync(b => b.Id == id,include: q => q.Include(b => b.Customer)
                     .Include(b => b.VillaNumber)
                     .ThenInclude(v => v.Villa));
             if (booking == null)
@@ -116,7 +116,7 @@ public class BookingController : ControllerBase
             }
 
             var checkVillaNumberExistence = await _unitOfWork.VillaNumber
-                .GetAsync(q => q.VillaNo == booking.VillaNumberId);
+                .GetAsync(q => q.Id == booking.VillaNumberId);
             if (checkVillaNumberExistence == null)
             {
                 _response.IsSuccess = false;
@@ -229,6 +229,36 @@ public class BookingController : ControllerBase
         await _unitOfWork.SaveChangesAsync();
         _response.StatusCode = HttpStatusCode.OK;
         return Ok(_response);
+    }
+
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<APIResponse>> DeleteAllBookings()
+    {
+        try
+        {
+            var checkBookingsExistence = await _unitOfWork.Booking.GetAsync();
+            if (checkBookingsExistence == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add("No Booking found");
+                return NotFound(_response);
+            }
+            await _unitOfWork.Booking.DeleteAllAsync();
+            await _unitOfWork.SaveChangesAsync();
+            _response.StatusCode = HttpStatusCode.OK;
+            return Ok(_response);
+        }
+        catch (Exception e)
+        {
+            _response.IsSuccess = false;
+            _response.StatusCode = HttpStatusCode.InternalServerError;
+            _response.ErrorMessages.Add(e.Message);
+        }
+        return StatusCode((int)_response.StatusCode, _response);
     }
 
     private async Task<(bool IsVaild, string ErrorMessage)>

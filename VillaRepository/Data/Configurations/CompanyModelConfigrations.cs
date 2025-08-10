@@ -1,6 +1,6 @@
 namespace VillaRepository.Data.Configurations;
 
-public class CompanyModelConfigurations
+public class CompanyModelConfigrations
 {
     
 }

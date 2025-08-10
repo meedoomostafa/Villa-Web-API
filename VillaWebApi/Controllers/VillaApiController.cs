@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 using VillaModels.Models;
 using VillaModels.Models.DTOs.VillaDTOs;
 using VillaRepository.Repository.Interfaces;
+using VillaWebApiUtilities;
 
 namespace VillaWebApi.Controllers;
 
-// [Route("api/[controller]")]
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+//[Authorize(Roles = ApplicationRoles.CompanyRoleName)]
 public class VillaApiController : ControllerBase
 {
     protected APIResponse _response;
@@ -143,22 +143,33 @@ public class VillaApiController : ControllerBase
                 return BadRequest(_response);
             }
 
-            Villa? checkVillaExistence = await _unitOfWork.Villa
+            var checkVillaNameExistence = await _unitOfWork.Villa
                 .GetAsync(u => u.Name.ToLower() == createDTO.Name.ToLower());
-        
-            if (checkVillaExistence != null)
+            if (checkVillaNameExistence != null)
             {
-                ModelState.AddModelError("Name", "Villa name already exists");
-                return BadRequest(ModelState);
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Villa already exists");
+                return BadRequest(_response);
             }
 
-            Villa model = _mapper.Map<Villa>(createDTO);
+            var checkCompanyExistence =
+                await _unitOfWork.Company.GetAsync(c => c.ApplicationUserId == createDTO.CompanyId);
+            if (checkCompanyExistence == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Company Id doesn't exist");
+                return BadRequest(_response);
+            }
 
-            await _unitOfWork.Villa.CreateAsync(model);
+            var villa = _mapper.Map<Villa>(createDTO);
+            await _unitOfWork.Villa.CreateAsync(villa);
             await _unitOfWork.SaveChangesAsync();
-            _response.Result = _mapper.Map<VillaDTO>(model);
+            
+            _response.Result = _mapper.Map<VillaDTO>(villa);
             _response.StatusCode = HttpStatusCode.Created;
-            return CreatedAtAction("GetVilla", new { id = model.Id }, _response);
+            return CreatedAtAction("GetVilla", new { id = villa.Id }, _response);
         }
         catch (Exception e)
         {
