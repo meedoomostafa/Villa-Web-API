@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using VillaWeb.Models;
@@ -27,7 +28,7 @@ public class CustomerHomeController : Controller
         }
         return View(villas);
     }
-
+    [Authorize]
     public IActionResult Privacy()
     {
         return View();

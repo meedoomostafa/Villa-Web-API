@@ -25,4 +25,7 @@ public static class SD
         Confirmed,
         Cancelled
     }
+    
+    public const string AdminRoleName = "Admin";
+    public const string CompanyRoleName = "Company";
 }

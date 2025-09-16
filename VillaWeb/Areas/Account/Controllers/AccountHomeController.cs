@@ -1,5 +1,11 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using VillaWeb.Models;
 using VillaWeb.Models.DTOs.AuthenticationDTOs;
 using VillaWeb.Models.ResponseTypes;
 using VillaWeb.Service.IService;
@@ -11,15 +17,22 @@ namespace VillaWeb.Areas.Account.Controllers
     public class AccountHomeController : Controller
     {
         private readonly IUnitOfServices _unitOfServices;
+        private readonly IEnumerable<SelectListItem> _roles;
 
-        public AccountHomeController(IUnitOfServices unitOfServices)
+        public AccountHomeController(IUnitOfServices unitOfServices, IOptions<List<RoleItem>> rolesOptions)
         {
             _unitOfServices = unitOfServices;
+            _roles = rolesOptions.Value.Select(u => new SelectListItem()
+            {
+                Value = u.Value,
+                Text = u.Text
+            });
         }
         
         [HttpGet]
         public async Task<IActionResult> Register()
         {
+            ViewBag.Roles = _roles;
             return View();
         }
 
@@ -27,6 +40,7 @@ namespace VillaWeb.Areas.Account.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterDTO register)
         {
+            ViewBag.Roles = _roles;
             if (ModelState.IsValid)
             {
                 var response = await _unitOfServices
@@ -35,7 +49,6 @@ namespace VillaWeb.Areas.Account.Controllers
                 {
                     return RedirectToAction(nameof(Login));
                 }
-
                 ModelState.AddModelError(string.Empty
                     , "Registration Failed" +
                       string.Join(", ", response?.ErrorMessages ?? new List<string>()));
@@ -78,6 +91,22 @@ namespace VillaWeb.Areas.Account.Controllers
                             SameSite = SameSiteMode.Strict,
                             Expires = loginResponse.RefreshTokenExpiration
                         });
+                        var claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Name, loginResponse.UserName),
+                            new Claim(ClaimTypes.Role, loginResponse.Role), 
+                        };
+
+                        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        var principal = new ClaimsPrincipal(identity);
+
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
+                            new AuthenticationProperties
+                            {
+                                IsPersistent = true,
+                                ExpiresUtc = loginResponse.RefreshTokenExpiration
+                            });
+
                         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                         {
                             return Redirect(returnUrl);
@@ -92,9 +121,11 @@ namespace VillaWeb.Areas.Account.Controllers
             return View(login);
         }
         [HttpGet]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
             Response.Cookies.Delete(SD.AccessTokenKey);
+            Response.Cookies.Delete(SD.RefreshTokenKey);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction(nameof(Login));
         }
     }

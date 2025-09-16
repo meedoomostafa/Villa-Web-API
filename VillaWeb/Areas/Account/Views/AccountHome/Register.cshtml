@@ -99,7 +99,17 @@
                                 <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
                             </div>
                         </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Role" class="control-label">Continue As:</label>
+                            <select asp-for="Role" class="form-control" asp-items="ViewBag.Roles">
+                                <option value="">select your role</option>
+                            </select>
+                            <span asp-validation-for="Role" class="text-danger"></span>
+                        </div>
 
+
+                        
                         <!-- Address -->
                         <div class="mb-3">
                             <label asp-for="Address" class="form-label fw-semibold">

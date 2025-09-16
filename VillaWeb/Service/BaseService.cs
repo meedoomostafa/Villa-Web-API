@@ -72,9 +72,10 @@ public class BaseService : IBaseService
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                var refreshed = await TryRefreshTokenAsync();
-                if (refreshed)
+                var newToken = await TryRefreshTokenAsync();
+                if (!string.IsNullOrEmpty(newToken))
                 {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", newToken);
                     return await SendAsync<T>(apiRequest);
                 }
             }
@@ -129,38 +130,31 @@ public class BaseService : IBaseService
             };
         }
     }
-    private async Task<bool> TryRefreshTokenAsync()
+    
+    private async Task<string?> TryRefreshTokenAsync()
     {
         var refreshToken = _httpContextAccessor.HttpContext!.Request.Cookies[SD.RefreshTokenKey];
-        if (string.IsNullOrWhiteSpace(refreshToken)) return false;
+        if (string.IsNullOrEmpty(refreshToken)) return null;
 
         using var client = _httpClient.CreateClient(nameof(IVillaService));
-
-        var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}{SD.VillaApiAuthenticationBase}/RefreshToken");
-        request.Content = new StringContent(
-            JsonConvert.SerializeObject(new { RefreshToken = refreshToken }),
-            Encoding.UTF8, "application/json"
-        );
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}{SD.VillaApiAuthenticationBase}/RefreshToken")
+        {
+            Content = new StringContent(
+                JsonConvert.SerializeObject(new { RefreshToken = refreshToken }),
+                Encoding.UTF8, "application/json")
+        };
 
         var response = await client.SendAsync(request);
-        var content = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode) return null;
 
-        if (!response.IsSuccessStatusCode) return false;
+        var tokenResponse = JsonConvert.DeserializeObject<LoginResponse>(await response.Content.ReadAsStringAsync());
+        if (tokenResponse == null) return null;
 
-        var tokenResponse = JsonConvert.DeserializeObject<LoginResponse>(content);
-        if (tokenResponse is null) return false;
+        var ctx = _httpContextAccessor.HttpContext!;
+        ctx.Response.Cookies.Append(SD.AccessTokenKey, tokenResponse.AccessToken, new CookieOptions { /* … */ });
+        ctx.Response.Cookies.Append(SD.RefreshTokenKey, tokenResponse.RefreshToken, new CookieOptions { /* … */ });
 
-        var context = _httpContextAccessor.HttpContext!;
-        context.Response.Cookies.Append(SD.AccessTokenKey, tokenResponse.AccessToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            Expires = tokenResponse.AccessTokenExpiration
-        });
-
-        return true;
+        return tokenResponse.AccessToken;
     }
-
 }
 
