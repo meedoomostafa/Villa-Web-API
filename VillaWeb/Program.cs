@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using VillaWeb;
+using VillaWeb.Models;
 using VillaWeb.Service;
 using VillaWeb.Service.IService;
 
@@ -8,9 +10,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
+builder.Services.Configure<List<RoleItem>>(builder.Configuration.GetSection("AllowedRolesForRegistration"));
 builder.Services.AddHttpClient<IUnitOfServices, UnitOfServices>();
 builder.Services.AddScoped<IUnitOfServices, UnitOfServices>();
-
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath  = "/Account/AccountHome/Login";
+        options.LogoutPath = "/Account/AccountHome/Logout";
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+        options.SlidingExpiration = true;
+    });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,6 +35,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

@@ -1,13 +1,16 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using VillaWeb.Models.DTOs.VillaNumberDTOs;
 using VillaWeb.Models.ResponseTypes;
 using VillaWeb.Service.IService;
+using VillaWebUtility;
 
 namespace VillaWeb.Areas.Company.Controllers;
 
 [Area("Company")]
+[Authorize(Roles = SD.CompanyRoleName)]
 public class VillaNumberController  : Controller
 {
     private readonly IUnitOfServices _unitOfServices;
