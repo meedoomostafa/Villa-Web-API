@@ -1,6 +1,6 @@
 using AppWebApiUtilities;
 
-namespace VillaModels.Models;
+namespace AppModels.Models;
 
 public sealed class Booking
 {

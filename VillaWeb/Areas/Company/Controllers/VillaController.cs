@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,11 +39,19 @@ public class VillaController : Controller
 
     public async Task<IActionResult> Create()
     {
-        return View();
+        var idClaim = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!int.TryParse(idClaim, out var currentUserId))
+        {
+            return Challenge(); 
+        }
+
+        var villa = new VillaCreateDTO { CompanyId = currentUserId };
+        return View(villa);
     }
+    
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(VillaCreateDTO villa , IFormFile? imageFile)
+    public async Task<IActionResult> Create(VillaCreateDTO villa ,[FromForm] IFormFile? imageFile)
     {
         if (ModelState.IsValid)
         {
@@ -207,8 +216,8 @@ public class VillaController : Controller
             villa = JsonConvert.DeserializeObject<VillaWithVillaNumbersDTO>(Convert.ToString(response.Result)!);
             villa.VillaNumbersSelectList = villa.VillaNumbers.Select(vn => new SelectListItem
             {
-                Value = vn.VillaNo.ToString(),
-                Text = $"Villa Number: {vn.VillaNo}"
+                Value = vn.Id.ToString(),
+                Text = $"Villa Number: {vn.Id}"
             }).ToList();
             
             TempData["ReturnUrl"] = Url.Action("Details", "Villa", new { area = "Company" , id = villa.Id });

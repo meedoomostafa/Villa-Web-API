@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using VillaModels.Models;
+using AppModels.Models;
 
 namespace AppService.Helpers;
 

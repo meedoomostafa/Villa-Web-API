@@ -9,5 +9,5 @@ public class BookingUpdateDTO
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public decimal TotalPrice { get; set; }
-    public SD.BookingStatus Status { get; set; } 
+    public BookingStatus Status { get; set; } 
 }

@@ -109,7 +109,7 @@
                      data-name="@villa.Name.ToLower()" 
                      data-amenities="@(villa.Amenity?.ToLower() ?? "")"
                      data-occupancy="@villa.Occupancy"
-                     data-rate="@villa.Rate">
+                     data-Price="@villa.Price">
                     <div class="card h-100 shadow-sm border-0 villa-item">
                         <div class="position-relative overflow-hidden">
                             @if (!string.IsNullOrEmpty(villa.ImageUrl))
@@ -132,7 +132,7 @@
                             </div>
                             <div class="position-absolute bottom-0 start-0 p-3">
                                 <span class="badge bg-dark bg-opacity-75 rounded-pill">
-                                    <i class="fas fa-dollar-sign me-1"></i>@villa.Rate.ToString("C")/night
+                                    <i class="fas fa-dollar-sign me-1"></i>@villa.Price.ToString("C")/night
                                 </span>
                             </div>
                         </div>
@@ -263,7 +263,7 @@
                     const name = $villa.data('name');
                     const amenities = $villa.data('amenities');
                     const occupancy = parseInt($villa.data('occupancy'));
-                    const rate = parseFloat($villa.data('rate'));
+                    const Price = parseFloat($villa.data('Price'));
                     
                     let showVilla = true;
                     
@@ -281,10 +281,10 @@
                     
                     // Price filter
                     if (priceFilter) {
-                        if (priceFilter === '0-200' && (rate < 0 || rate > 200)) showVilla = false;
-                        else if (priceFilter === '200-500' && (rate < 200 || rate > 500)) showVilla = false;
-                        else if (priceFilter === '500-1000' && (rate < 500 || rate > 1000)) showVilla = false;
-                        else if (priceFilter === '1000+' && rate < 1000) showVilla = false;
+                        if (priceFilter === '0-200' && (Price < 0 || Price > 200)) showVilla = false;
+                        else if (priceFilter === '200-500' && (Price < 200 || Price > 500)) showVilla = false;
+                        else if (priceFilter === '500-1000' && (Price < 500 || Price > 1000)) showVilla = false;
+                        else if (priceFilter === '1000+' && Price < 1000) showVilla = false;
                     }
                     
                     if (showVilla) {

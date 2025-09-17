@@ -1,4 +1,4 @@
-namespace VillaModels.Models.DTOs.BookingDTOs;
+namespace AppModels.Models.DTOs.BookingDTOs;
 
 public class BookingCreateDTO
 {

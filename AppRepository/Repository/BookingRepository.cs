@@ -1,7 +1,7 @@
 using AppRepository.Data;
 using AppRepository.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using VillaModels.Models;
+using AppModels.Models;
 
 namespace AppRepository.Repository;
 

@@ -30,36 +30,86 @@ namespace VillaWeb.Areas.Account.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> Register()
+        public async Task<IActionResult> RegisterCustomer()
         {
             ViewBag.Roles = _roles;
-            return View();
+            return View(new RegisterCustomerDTO());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterDTO register)
+        public async Task<IActionResult> RegisterCustomer(RegisterCustomerDTO registerCustomer)
         {
             ViewBag.Roles = _roles;
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var response = await _unitOfServices
-                    .AuthenticationService.RegisterAsync<APIResponse>(register);
-                if (response != null && response.IsSuccess)
-                {
-                    return RedirectToAction(nameof(Login));
-                }
-                ModelState.AddModelError(string.Empty
-                    , "Registration Failed" +
-                      string.Join(", ", response?.ErrorMessages ?? new List<string>()));
+                return View("RegisterCustomer", registerCustomer);
             }
-            return View(nameof(Register),register);
+
+            var response = await _unitOfServices.AuthenticationService.RegisterCustomerAsync<APIResponse>(registerCustomer);
+
+            if (response != null && response.IsSuccess)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+            
+            var errorMessage = "Registration Failed. Please try again.";
+            if (response?.ErrorMessages != null && response.ErrorMessages.Any())
+            {
+                errorMessage = "Registration Failed: " + string.Join(", ", response.ErrorMessages);
+            }
+            else if (response == null)
+            {
+                errorMessage = "Registration failed: An unexpected error occurred.";
+            }
+
+            ModelState.AddModelError(string.Empty, errorMessage);
+            return View("RegisterCustomer", registerCustomer);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> RegisterCompany()
+        {
+            ViewBag.Roles = _roles;
+            return View(new RegisterCompanyDTO());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterCompany(RegisterCompanyDTO registerCompany)
+        {
+            ViewBag.Roles = _roles;
+            if (!ModelState.IsValid)
+            {
+                return View(nameof(RegisterCompany), registerCompany);
+            }
+            
+            var response = await _unitOfServices.AuthenticationService.RegisterCompanyAsync<APIResponse>(registerCompany);
+            
+            if (response != null && response.IsSuccess)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            var errorMessage = "Registration Failed. Please try again.";
+            if (response?.ErrorMessages != null && response.ErrorMessages.Any())
+            {
+                errorMessage = "Registration Failed: " + string.Join(", ", response.ErrorMessages);
+            }
+            else if (response == null)
+            {
+                errorMessage = "Registration failed: An unexpected error occurred.";
+            }
+
+            ModelState.AddModelError(string.Empty, errorMessage);
+            return View(nameof(RegisterCompany), registerCompany);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return View(new LoginDTO());
         }
 
         [HttpPost]
@@ -72,10 +122,9 @@ namespace VillaWeb.Areas.Account.Controllers
                 var response = await _unitOfServices.AuthenticationService.LoginAsync<APIResponse>(login);
                 if (response != null && response.IsSuccess && response.Result != null)
                 {
-                    var loginResponse = JsonConvert
-                        .DeserializeObject<LoginResponse>(Convert.ToString(response.Result)!);
+                    var loginResponse = JsonConvert.DeserializeObject<LoginResponse>(Convert.ToString(response.Result)!);
 
-                    if (loginResponse != null)
+                    if (loginResponse != null && loginResponse.Id.HasValue)
                     {
                         Response.Cookies.Append(SD.AccessTokenKey, loginResponse.AccessToken, new CookieOptions()
                         {
@@ -94,7 +143,8 @@ namespace VillaWeb.Areas.Account.Controllers
                         var claims = new List<Claim>
                         {
                             new Claim(ClaimTypes.Name, loginResponse.UserName),
-                            new Claim(ClaimTypes.Role, loginResponse.Role), 
+                            new Claim(ClaimTypes.Role, loginResponse.Role),
+                            new Claim(ClaimTypes.NameIdentifier, loginResponse.Id.Value.ToString()),
                         };
 
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -111,14 +161,21 @@ namespace VillaWeb.Areas.Account.Controllers
                         {
                             return Redirect(returnUrl);
                         }
-                        return RedirectToAction(nameof(Index),"CustomerHome", new { area = "Customer" });
+                        return RedirectToAction("Index","CustomerHome", new { area = "Customer" });
                     }
                 }
-
-                ModelState.AddModelError("",
-                    "Login failed" + string.Join(", ", response?.ErrorMessages ?? new List<string>()));
+                var errorMessage = "Login failed. Please check your credentials.";
+                if (response?.ErrorMessages != null && response.ErrorMessages.Any())
+                {
+                    errorMessage = "Login failed: " + string.Join(", ", response.ErrorMessages);
+                }
+                else if (response == null)
+                {
+                    errorMessage = "Login failed: An unexpected error occurred.";
+                }
+                ModelState.AddModelError(string.Empty, errorMessage);
             }   
-            return View(login);
+            return View("Login",login);
         }
         [HttpGet]
         public async Task<IActionResult> Logout()

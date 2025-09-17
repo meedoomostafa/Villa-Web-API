@@ -19,13 +19,6 @@ public static class SD
     public static string AccessTokenKey = "access_token";
     public static string RefreshTokenKey = "refresh_token";
     
-    public enum BookingStatus
-    {
-        Pending,
-        Confirmed,
-        Cancelled
-    }
-    
     public const string AdminRoleName = "Admin";
     public const string CompanyRoleName = "Company";
 }

@@ -1,6 +1,6 @@
 using AppWebApiUtilities;
 using Microsoft.AspNetCore.Identity;
-using VillaModels.Models;
+using AppModels.Models;
 
 namespace AppRepository.Seeder;
 

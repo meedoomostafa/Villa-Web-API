@@ -1,4 +1,4 @@
-namespace VillaModels.Models;
+namespace AppModels.Models;
 public sealed class Villa
 {
     public int Id { get; set; }

@@ -1,8 +1,7 @@
+using AppModels.Models;
 using AppRepository.Data.Configurations;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using VillaModels.Models;
 
 namespace AppRepository.Data;
 public sealed class ApplicationDbContext : IdentityDbContext<ApplicationUser,ApplicationRole, int>

@@ -1,4 +1,4 @@
-using VillaModels.Models;
+using AppModels.Models;
 using AppRepository.Repository.Interfaces;
 using AppService.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +33,7 @@ public class VillaService : IVillaService
     public async Task<Villa> CheckVillaNameExistence(string name)
     {
         return await _unitOfWork.Villa
-            .GetAsync(u => u.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+            .GetAsync(u => u.Name.ToLower() == name.ToLower());
     }
 
     public async Task CreateVilla(Villa entity)

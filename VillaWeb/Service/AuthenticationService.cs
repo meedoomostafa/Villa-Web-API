@@ -24,11 +24,18 @@ public class AuthenticationService : BaseService, IAuthenticationService
         });
     }
 
-    public async Task<T> RegisterAsync<T>(RegisterDTO dto) where T : APIResponse, new()
+    public async Task<T> RegisterCustomerAsync<T>(RegisterCustomerDTO customerDto) where T : APIResponse, new()
     {
         return await SendAsync<T>(new APIRequest()
         {
-            ApiType = SD.ApiType.POST, Data = dto, Url = $"{_baseUrl}{SD.VillaApiAuthenticationBase}/Register"
+            ApiType = SD.ApiType.POST, Data = customerDto, Url = $"{_baseUrl}{SD.VillaApiAuthenticationBase}/Register"
+        });
+    }
+    public async Task<T> RegisterCompanyAsync<T>(RegisterCompanyDTO companyDto) where T : APIResponse, new()
+    {
+        return await SendAsync<T>(new APIRequest()
+        {
+            ApiType = SD.ApiType.POST, Data = companyDto, Url = $"{_baseUrl}{SD.VillaApiAuthenticationBase}/RegisterCompany"
         });
     }
 }

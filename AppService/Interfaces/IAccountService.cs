@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using VillaModels.Models;
+using AppModels.Models;
 
 namespace AppService.Interfaces;
 

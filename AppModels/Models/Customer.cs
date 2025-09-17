@@ -1,4 +1,4 @@
-namespace VillaModels.Models;
+namespace AppModels.Models;
 
 public class Customer
 {

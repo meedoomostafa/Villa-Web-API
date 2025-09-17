@@ -1,4 +1,4 @@
-namespace VillaModels.RequestsTypes;
+namespace AppModels.RequestsTypes;
 
 public class RefreshRequest
 {

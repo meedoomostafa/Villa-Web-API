@@ -1,6 +1,6 @@
 using AppRepository.Data;
 using AppRepository.Repository.Interfaces;
-using VillaModels.Models;
+using AppModels.Models;
 
 namespace AppRepository.Repository;
 

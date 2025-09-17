@@ -21,7 +21,7 @@
             <!-- Form Card -->
             <div class="card">
                 <div class="card-content p-4">
-                    <form asp-area="Company" asp-controller=Villa asp-action="Edit" method="post" enctype="multipart/form-data">
+                    <form asp-area="Company" asp-controller="Villa" asp-action="Edit" method="post" enctype="multipart/form-data">
                         <input type="hidden" asp-for="Id" />
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
@@ -46,14 +46,14 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-4">
-                                <label asp-for="Rate" class="form-label">
-                                    <i class="fas fa-dollar-sign me-2 text-success"></i>Nightly Rate
+                                <label asp-for="Price" class="form-label">
+                                    <i class="fas fa-dollar-sign me-2 text-success"></i>Nightly Price
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
-                                    <input asp-for="Rate" type="number" step="0.01" class="form-control" placeholder="Enter nightly rate" />
+                                    <input asp-for="Price" type="number" step="0.01" class="form-control" placeholder="Enter nightly Price" />
                                 </div>
-                                <span asp-validation-for="Rate" class="text-danger small"></span>
+                                <span asp-validation-for="Price" class="text-danger small"></span>
                             </div>
 
                             <div class="col-md-6 mb-4">
@@ -115,7 +115,57 @@
                             <small class="text-muted">Separate multiple amenities with commas</small>
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center">
+                        <!-- Location Section -->
+                        <div class="mt-4 pt-4 border-top">
+                            <h5 class="mb-3"><i class="fas fa-map-marked-alt me-2 text-info"></i>Location Details</h5>
+                            <div class="mb-4">
+                                <label asp-for="LocationAddress" class="form-label">
+                                    <i class="fas fa-map-pin me-2 text-secondary"></i>Full Address
+                                </label>
+                                <textarea asp-for="LocationAddress" class="form-control" rows="2" placeholder="Enter the full address of the villa"></textarea>
+                                <span asp-validation-for="LocationAddress" class="text-danger small"></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="Country" class="form-label">
+                                        <i class="fas fa-globe-americas me-2 text-secondary"></i>Country
+                                    </label>
+                                    <input asp-for="Country" class="form-control" placeholder="Enter country" />
+                                    <span asp-validation-for="Country" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="City" class="form-label">
+                                        <i class="fas fa-city me-2 text-secondary"></i>City
+                                    </label>
+                                    <input asp-for="City" class="form-control" placeholder="Enter city" />
+                                    <span asp-validation-for="City" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="Latitude" class="form-label">
+                                        <i class="fas fa-location-arrow me-2 text-secondary"></i>Latitude
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                        <input asp-for="Latitude" type="number" step="any" class="form-control" placeholder="e.g., 29.9792" />
+                                    </div>
+                                    <span asp-validation-for="Latitude" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="Longitude" class="form-label">
+                                        <i class="fas fa-location-arrow me-2 text-secondary"></i>Longitude
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                        <input asp-for="Longitude" type="number" step="any" class="form-control" placeholder="e.g., 31.1342" />
+                                    </div>
+                                    <span asp-validation-for="Longitude" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
                             <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2">
                                 <i class="fas fa-arrow-left me-2"></i>Back to List
                             </a>

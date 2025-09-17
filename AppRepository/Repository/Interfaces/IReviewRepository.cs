@@ -1,4 +1,4 @@
-using VillaModels.Models;
+using AppModels.Models;
 
 namespace AppRepository.Repository.Interfaces;
 

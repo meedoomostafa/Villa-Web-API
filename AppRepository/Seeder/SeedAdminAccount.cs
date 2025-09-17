@@ -1,7 +1,7 @@
 using AppWebApiUtilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using VillaModels.Models;
+using AppModels.Models;
 
 namespace AppRepository.Seeder;
 

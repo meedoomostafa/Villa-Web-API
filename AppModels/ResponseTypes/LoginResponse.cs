@@ -1,4 +1,4 @@
-namespace VillaModels.ResponseTypes;
+namespace AppModels.ResponseTypes;
 
 public class LoginResponse //The default to put it in the result of APIResponse to unified the response form
 {
@@ -12,5 +12,5 @@ public class LoginResponse //The default to put it in the result of APIResponse 
     public string UserName { get; set; }
     public string Email { get; set; }
     public string Role { get; set; } = null!;
-
+    public int Id { get; set; }
 }

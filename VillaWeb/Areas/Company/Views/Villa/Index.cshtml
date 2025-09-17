@@ -51,8 +51,8 @@
                             <i class="fas fa-dollar-sign text-warning"></i>
                         </div>
                         <div class="card-content">
-                            <h3 class="stat-number">@(Model?.Average(v => v.Rate).ToString("C") ?? "$0")</h3>
-                            <p class="stat-label">Avg Rate</p>
+                            <h3 class="stat-number">@(Model != null && Model.Any() ? Model.Average(v => v.Price).ToString("C") : "$0")</h3>
+                            <p class="stat-label">Avg Price</p>
                         </div>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
                                 <th><i class="fas fa-tag me-2"></i>Name</th>
                                 <th><i class="fas fa-info-circle me-2"></i>Details</th>
                                 <th><i class="fas fa-star me-2"></i>Amenities</th>
-                                <th><i class="fas fa-dollar-sign me-2"></i>Rate</th>
+                                <th><i class="fas fa-dollar-sign me-2"></i>Price</th>
                                 <th><i class="fas fa-users me-2"></i>Occupancy</th>
                                 <th><i class="fas fa-ruler-combined me-2"></i>Sq Ft</th>
                                 <th><i class="fas fa-cog me-2"></i>Actions</th>
@@ -121,7 +121,7 @@
                                                     @(villa.Amenity?.Length > 30 ? villa.Amenity.Substring(0, 30) + "..." : villa.Amenity)
                                                 </span>
                                 </td>
-                                <td class="fw-bold text-success">@villa.Rate.ToString("C")</td>
+                                <td class="fw-bold text-success">@villa.Price.ToString("C")</td>
                                 <td>
                                                 <span class="badge bg-info">
                                                     <i class="fas fa-users me-1"></i>@villa.Occupancy

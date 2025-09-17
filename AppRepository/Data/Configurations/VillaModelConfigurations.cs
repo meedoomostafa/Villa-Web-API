@@ -1,6 +1,7 @@
+using AppModels.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using VillaModels.Models;
+using AppModels.Models;
 
 namespace AppRepository.Data.Configurations;
 

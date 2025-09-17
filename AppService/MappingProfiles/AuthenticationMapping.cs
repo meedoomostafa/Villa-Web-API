@@ -1,6 +1,7 @@
+using AppModels.Models;
 using AutoMapper;
-using VillaModels.Models;
-using VillaModels.Models.DTOs.AuthenticationDTOs;
+using AppModels.Models;
+using AppModels.Models.DTOs.AuthenticationDTOs;
 
 namespace AppService.MappingProfiles;
 
@@ -16,11 +17,7 @@ public class AuthenticationMapping : Profile
             .ReverseMap();
 
         CreateMap<RegisterCompanyDTO, Company>()
-            .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.CompanyName))
-            .ForMember(dest => dest.CommercialRegistrationDocUrl,
-                opt => opt.MapFrom(src => src.CommercialRegistrationDocUrl))
-            .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
-            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
+            .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore())
             .ReverseMap();
 
         CreateMap<ApplicationUser, RegisterCustomerDTO>().ReverseMap();

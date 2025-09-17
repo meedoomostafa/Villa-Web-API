@@ -25,6 +25,8 @@ public class UnitOfServices : IUnitOfServices
         IRefreshTokenService refreshTokenService,
         IAccountService account)
     {
+        _unitOfWork = unitOfWork;
+        
         Villas = villas;
         Bookings = bookings;
         Customers = customers;

@@ -1,7 +1,5 @@
 
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace VillaModels.Models;
+namespace AppModels.Models;
 
 public sealed class VillaNumber
 {
