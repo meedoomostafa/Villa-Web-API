@@ -12,7 +12,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h2 class="hero-title mb-2 text-danger">
-                        <i class="fas fa-trash-alt me-2"></i>Delete Villa Number #@Model.VillaNo
+                        <i class="fas fa-trash-alt me-2"></i>Delete Villa Number #@Model.Id
                     </h2>
                     <p class="hero-subtitle mb-0">Confirm deletion of this villa number and its configuration</p>
                 </div>
@@ -44,7 +44,7 @@
                                     <i class="fas fa-hashtag text-primary"></i>
                                 </div>
                                 <div class="card-content">
-                                    <h3 class="stat-number">#@Model.VillaNo</h3>
+                                    <h3 class="stat-number">#@Model.Id</h3>
                                     <p class="stat-label">Villa Number</p>
                                 </div>
                             </div>
@@ -73,7 +73,7 @@
                                 <dt class="col-sm-3 mb-2">
                                     <i class="fas fa-hashtag me-2 text-muted"></i>Villa Number:
                                 </dt>
-                                <dd class="col-sm-9 mb-2 fw-bold text-primary">#@Model.VillaNo</dd>
+                                <dd class="col-sm-9 mb-2 fw-bold text-primary">#@Model.Id</dd>
                                 
                                 <dt class="col-sm-3 mb-2">
                                     <i class="fas fa-tag me-2 text-muted"></i>Villa Name:
@@ -89,9 +89,9 @@
                                     <i class="fas fa-star me-2 text-muted"></i>Special Details:
                                 </dt>
                                 <dd class="col-sm-9 mb-2">
-                                    @if (!string.IsNullOrEmpty(Model.SpetialDeatils))
+                                    @if (!string.IsNullOrEmpty(Model.SpecialDetails))
                                     {
-                                        <span>@Model.SpetialDeatils</span>
+                                        <span>@Model.SpecialDetails</span>
                                     }
                                     else
                                     {
@@ -103,8 +103,8 @@
                     </div>
 
                     <!-- Action Form -->
-                    <form asp-area="Company" asp-controller="VillaNumber" asp-action="DeleteConfirm" asp-route-id="@Model.VillaNo" method="post">
-                        <input type="hidden" name="id" asp-for="VillaNo" />
+                    <form asp-area="Company" asp-controller="VillaNumber" asp-action="DeleteConfirm" asp-route-id="@Model.Id" method="post">
+                        <input type="hidden" name="id" asp-for="Id" />
                         <div class="d-flex gap-3 justify-content-center">
                             <button type="submit" class="btn btn-danger btn-lg px-5">
                                 <i class="fas fa-trash-alt me-2"></i>Yes, Delete Villa Number
@@ -189,7 +189,7 @@
                     <div class="mt-3">
                         <small class="text-muted">
                             <i class="fas fa-info-circle me-1"></i>
-                            This villa will remain in the system after deleting villa number #@Model.VillaNo. Other villa numbers associated with this villa (if any) will not be affected.
+                            This villa will remain in the system after deleting villa number #@Model.Id. Other villa numbers associated with this villa (if any) will not be affected.
                         </small>
                     </div>
                 </div>
@@ -211,7 +211,7 @@
                                     <h6 class="mb-1">Edit Villa Number</h6>
                                     <small class="text-muted">Modify special details or villa association</small>
                                 </div>
-                                <a asp-action="Edit" asp-route-id="@Model.VillaNo" class="btn btn-sm btn-outline-primary">
+                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-edit me-1"></i>Edit
                                 </a>
                             </div>
@@ -245,7 +245,7 @@
             if (deleteForm) {
                 deleteForm.addEventListener('submit', function(e) {
                     // Additional confirmation for critical action
-                    if (!confirm('⚠️ Final confirmation: Delete Villa Number #@Model.VillaNo?\n\nThis action cannot be undone!')) {
+                    if (!confirm('⚠️ Final confirmation: Delete Villa Number #@Model.Id?\n\nThis action cannot be undone!')) {
                         e.preventDefault();
                         return false;
                     }

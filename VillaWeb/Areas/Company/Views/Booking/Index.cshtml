@@ -28,7 +28,7 @@
                             <i class="fas fa-check-circle text-success"></i>
                         </div>
                         <div class="card-content">
-                            <h3 class="stat-number">@Model?.Count(b => b.Status == VillaWebUtility.SD.BookingStatus.Confirmed)</h3>
+                            <h3 class="stat-number">@Model?.Count(b => b.Status == VillaWebUtility.BookingStatus.Confirmed)</h3>
                             <p class="stat-label">Confirmed</p>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                             <i class="fas fa-clock text-warning"></i>
                         </div>
                         <div class="card-content">
-                            <h3 class="stat-number">@Model?.Count(b => b.Status == VillaWebUtility.SD.BookingStatus.Pending)</h3>
+                            <h3 class="stat-number">@Model?.Count(b => b.Status == VillaWebUtility.BookingStatus.Pending)</h3>
                             <p class="stat-label">Pending</p>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                             <i class="fas fa-times-circle text-danger"></i>
                         </div>
                         <div class="card-content">
-                            <h3 class="stat-number">@Model?.Count(b => b.Status == VillaWebUtility.SD.BookingStatus.Cancelled)</h3>
+                            <h3 class="stat-number">@Model?.Count(b => b.Status == VillaWebUtility.BookingStatus.Cancelled)</h3>
                             <p class="stat-label">Cancelled</p>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                             <i class="fas fa-dollar-sign text-primary"></i>
                         </div>
                         <div class="card-content text-center">
-                            <h3 class="stat-number">$@Model?.Where(b => b.Status == VillaWebUtility.SD.BookingStatus.Confirmed).Sum(b => b.TotalPrice).ToString("N0")</h3>
+                            <h3 class="stat-number">$@Model?.Where(b => b.Status == VillaWebUtility.BookingStatus.Confirmed).Sum(b => b.TotalPrice).ToString("N0")</h3>
                             <p class="stat-label">Confirmed Revenue</p>
                         </div>
                     </div>
@@ -101,7 +101,7 @@
                                                     <div class="brand-icon me-2" style="width: 32px; height: 32px; font-size: 14px;">
                                                         <i class="fas fa-user"></i>
                                                     </div>
-                                                    @booking.UserFullName
+                                                    @booking.CustomerFullName
                                                 </div>
                                             </td>
                                             <td>
@@ -121,9 +121,9 @@
                                             <td class="fw-bold text-success">$@booking.TotalPrice.ToString("N2")</td>
                                             <td>
                                                 <span class="badge 
-                                                    @(booking.Status == VillaWebUtility.SD.BookingStatus.Confirmed ? "bg-success" : 
-                                                      booking.Status == VillaWebUtility.SD.BookingStatus.Pending ? "bg-warning" : 
-                                                      booking.Status == VillaWebUtility.SD.BookingStatus.Cancelled ? "bg-danger" : "bg-secondary")">
+                                                    @(booking.Status == VillaWebUtility.BookingStatus.Confirmed ? "bg-success" : 
+                                                      booking.Status == VillaWebUtility.BookingStatus.Pending ? "bg-warning" : 
+                                                      booking.Status == VillaWebUtility.BookingStatus.Cancelled ? "bg-danger" : "bg-secondary")">
                                                     <i class="fas fa-circle me-1" style="font-size: 8px;"></i>
                                                     @booking.Status
                                                 </span>

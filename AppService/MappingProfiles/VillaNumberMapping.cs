@@ -1,6 +1,6 @@
 using AutoMapper;
-using VillaModels.Models;
-using VillaModels.Models.DTOs.VillaNumberDTOs;
+using AppModels.Models;
+using AppModels.Models.DTOs.VillaNumberDTOs;
 
 namespace AppService.MappingProfiles;
 

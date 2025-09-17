@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace VillaModels.Models;
+namespace AppModels.Models;
 
 public sealed class ApplicationUser : IdentityUser<int>
 {

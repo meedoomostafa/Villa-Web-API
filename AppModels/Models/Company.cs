@@ -1,9 +1,10 @@
-namespace VillaModels.Models;
+
+namespace AppModels.Models;
 
 public sealed class Company 
 {
     public int ApplicationUserId { get; set; }
-    public ApplicationUser ApplicationUser { get; set; }
+    public ApplicationUser? ApplicationUser { get; set; }
     
     public string CompanyName { get; set; }
     public string CommercialRegistrationDocUrl { get; set; }

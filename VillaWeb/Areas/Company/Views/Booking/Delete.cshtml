@@ -55,7 +55,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="feature-item">
                                         <i class="fas fa-user text-info me-2"></i>
-                                        <span><strong>Guest:</strong> @Model.UserFullName</span>
+                                        <span><strong>Guest:</strong> @Model.CustomerFullName</span>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -93,9 +93,9 @@
                                         <i class="fas fa-info-circle me-2"></i>
                                         <span><strong>Status:</strong> 
                                             <span class="badge 
-                                                @(Model.Status == VillaWebUtility.SD.BookingStatus.Confirmed ? "bg-success" : 
-                                                  Model.Status == VillaWebUtility.SD.BookingStatus.Pending ? "bg-warning" : 
-                                                  Model.Status == VillaWebUtility.SD.BookingStatus.Cancelled ? "bg-danger" : "bg-secondary") ms-2">
+                                                @(Model.Status == VillaWebUtility.BookingStatus.Confirmed ? "bg-success" : 
+                                                  Model.Status == VillaWebUtility.BookingStatus.Pending ? "bg-warning" : 
+                                                  Model.Status == VillaWebUtility.BookingStatus.Cancelled ? "bg-danger" : "bg-secondary") ms-2">
                                                 @Model.Status
                                             </span>
                                         </span>

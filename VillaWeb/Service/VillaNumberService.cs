@@ -42,7 +42,7 @@ public class VillaNumberService : BaseService, IVillaNumberService
     {
         return await SendAsync<T>(new APIRequest()
         {
-            ApiType = SD.ApiType.PUT, Url = $"{_baseUrl}{SD.VillaApiNumberBase}/{dto.VillaNo}", Data = dto
+            ApiType = SD.ApiType.PUT, Url = $"{_baseUrl}{SD.VillaApiNumberBase}/{dto.Id}", Data = dto
         });
     }
 

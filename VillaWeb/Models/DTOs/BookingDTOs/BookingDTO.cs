@@ -10,10 +10,10 @@ public class BookingDTO
     public DateTime EndDate { get; set; }
 
     public decimal TotalPrice { get; set; }
-    public SD.BookingStatus Status { get; set; }
+    public BookingStatus Status { get; set; }
 
-    public int ApplicationUserId { get; set; }
-    public string UserFullName { get; set; }
+    public int CustomerId { get; set; }
+    public string CustomerFullName { get; set; }
 
     public int VillaNumberId { get; set; }
     public string VillaSpecialDetails { get; set; }

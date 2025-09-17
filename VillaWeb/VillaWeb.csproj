@@ -54,7 +54,6 @@
       <AdditionalFiles Include="Areas\Company\Views\Villa\Edit.cshtml" />
       <AdditionalFiles Include="Areas\Company\Views\Villa\Index.cshtml" />
       <AdditionalFiles Include="Areas\Account\Views\AccountHome\Login.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Views\AccountHome\Register.cshtml" />
     </ItemGroup>
 
     

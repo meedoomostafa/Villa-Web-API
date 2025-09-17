@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace VillaModels.Models.DTOs.AuthenticationDTOs;
+namespace AppModels.Models.DTOs.AuthenticationDTOs;
 
 public class LoginDTO
 {

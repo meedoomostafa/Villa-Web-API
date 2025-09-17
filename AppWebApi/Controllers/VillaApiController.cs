@@ -4,8 +4,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using VillaModels.Models;
-using VillaModels.Models.DTOs.VillaDTOs;
+using AppModels.Models;
+using AppModels.Models.DTOs.VillaDTOs;
 
 namespace AppWebApi.Controllers;
 
@@ -140,7 +140,8 @@ public class VillaApiController : ControllerBase
                 return BadRequest(_response);
             }
 
-            var checkVillaNameExistence = await _unitOfServices.Villas.CheckVillaNameExistence(createDTO.Name);
+            var checkVillaNameExistence = await _unitOfServices.Villas
+                .CheckVillaNameExistence(createDTO.Name);
             
             if (checkVillaNameExistence != null)
             {
@@ -150,7 +151,8 @@ public class VillaApiController : ControllerBase
                 return BadRequest(_response);
             }
 
-            var checkCompanyExistence = await _unitOfServices.Companies.CheckCompanyExistence(createDTO.CompanyId);
+            var checkCompanyExistence = await _unitOfServices.Companies
+                .CheckCompanyExistence(createDTO.CompanyId);
             if (checkCompanyExistence == null)
             {
                 _response.IsSuccess = false;

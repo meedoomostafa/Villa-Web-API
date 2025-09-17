@@ -2,8 +2,8 @@ using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using VillaModels.Models;
-using VillaModels.Models.DTOs.VillaNumberDTOs;
+using AppModels.Models;
+using AppModels.Models.DTOs.VillaNumberDTOs;
 using AppRepository.Repository.Interfaces;
 
 namespace AppWebApi.Controllers;

@@ -2,14 +2,14 @@ using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using VillaModels.Models;
-using VillaModels.Models.DTOs.AuthenticationDTOs;
-using VillaModels.ResponseTypes;
+using AppModels.Models;
+using AppModels.Models.DTOs.AuthenticationDTOs;
+using AppModels.ResponseTypes;
 using AppRepository.Repository.Interfaces;
 using AppWebApiUtilities;
 using AppService.Helpers;
 using AppService.Interfaces;
-using RefreshRequest = VillaModels.RequestsTypes.RefreshRequest;
+using RefreshRequest = AppModels.RequestsTypes.RefreshRequest;
 
 namespace AppWebApi.Controllers;
 
@@ -18,7 +18,6 @@ namespace AppWebApi.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
     private readonly APIResponse _response;
@@ -28,7 +27,6 @@ public class AccountController : ControllerBase
 
     public AccountController(
         UserManager<ApplicationUser> userManager, 
-        RoleManager<ApplicationRole> roleManager,
         IConfiguration configuration,
         IMapper mapper,
         IUnitOfServices unitOfServices,
@@ -36,7 +34,6 @@ public class AccountController : ControllerBase
         AccountHelper accountHelper)
     {
         _userManager = userManager;
-        _roleManager = roleManager;
         _configuration = configuration;
         _mapper = mapper;
         _unitOfServices = unitOfServices;
@@ -72,7 +69,9 @@ public class AccountController : ControllerBase
             }
             
             var companyUser = _mapper.Map<ApplicationUser>(companyDTO);
-            var companyUserCreationResult = await _unitOfServices.Account.CreateUserAsync(companyUser , companyDTO.Password);
+            var companyUserCreationResult = await _unitOfServices.Account
+                .CreateUserAsync(companyUser , companyDTO.Password);
+            
             if (!companyUserCreationResult.Succeeded)
             {
                 _response.IsSuccess = false;
@@ -81,8 +80,9 @@ public class AccountController : ControllerBase
                 return BadRequest(_response);
             }
 
-            var companyRoleAssigningResult =
-                await _unitOfServices.Account.AssignUserToRoleAsync(companyUser, ApplicationRoles.CompanyRoleName);
+            var companyRoleAssigningResult = await _unitOfServices.Account
+                .AssignUserToRoleAsync(companyUser, ApplicationRoles.CompanyRoleName);
+            
             if (!companyRoleAssigningResult.Succeeded)
             {
                 _response.IsSuccess = false;
@@ -228,7 +228,8 @@ public class AccountController : ControllerBase
                 UserName = user.UserName!,
                 Email = user.Email!,
                 Role = roles.FirstOrDefault() ?? "",
-                DeviceId = deviceId 
+                DeviceId = deviceId ,
+                Id = user.Id
             };
 
             _response.StatusCode = HttpStatusCode.OK;

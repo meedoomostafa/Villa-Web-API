@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using VillaModels.Models.DTOs.VillaDTOs;
+using AppModels.Models.DTOs.VillaDTOs;
 
-namespace VillaModels.Models.DTOs.VillaNumberDTOs;
+namespace AppModels.Models.DTOs.VillaNumberDTOs;
 
 public class VillaNumberDTO
 {
