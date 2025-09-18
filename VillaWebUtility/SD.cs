@@ -13,6 +13,9 @@ public static class SD
     public static string VillaApiNumberBase = "/api/VillaNumberApi";
     public static string BookingApiBase = "/api/Booking";
     public static string VillaApiAuthenticationBase = "/api/Account";
+    public static string VillaApiCustomerBase = "/api/Customer";
+    public static string VillaApiCompanyBase = "/api/Company";
+        
     
     public static string GetVillaWithVillaNumbersEndPoint = "GetVillaWithVillaNumbers";
     

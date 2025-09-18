@@ -6,4 +6,6 @@ public interface IUnitOfServices
     IVillaNumberService VillaNumberService { get; }
     IBookingService BookingService { get; }
     IAuthenticationService AuthenticationService { get; }
+    ICustomerService CustomerService { get; }
+    ICompanyService CompanyService { get; }
 }
