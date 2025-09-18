@@ -1,18 +1,19 @@
 using System.Net;
 using AppModels.Models;
 using AppModels.Models.DTOs.ProfilesDTOs;
-using Microsoft.AspNetCore.Mvc;
 using AppService.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AppWebApi.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
-public class CustomerController : ControllerBase
+public class CompanyController : ControllerBase
 {
     private readonly IUnitOfServices _unitOfServices;
     private readonly IMapper _mapper;
-    public CustomerController(
+    public CompanyController(
         IUnitOfServices unitOfServices
         ,IMapper mapper)
     {
@@ -21,27 +22,25 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<APIResponse>> CustomerProfile(int id)
+    public async Task<ActionResult<APIResponse>> CompanyProfile(int id)
     {
         try
         {
-            var customer = await _unitOfServices.Customers.GetCustomerById(id);
-            if (customer == null)
+            var company = await _unitOfServices.Companies
+                .GetCompanyById(id);
+            if (company == null)
             {
                 return NotFound(new APIResponse()
                 {
                     IsSuccess = false,
                     StatusCode = HttpStatusCode.NotFound,
-                    ErrorMessages = new List<string>(){"No Customer found"}
+                    ErrorMessages = new List<string>(){"No Company found"}
                 });
             }
             return Ok(new APIResponse()
             {
                 StatusCode = HttpStatusCode.OK,
-                Result = _mapper.Map<CustomerProfileDTO>(customer)
+                Result = _mapper.Map<CompanyProfileDTO>(company)
             });
         }
         catch (Exception e)
@@ -54,16 +53,15 @@ public class CustomerController : ControllerBase
             });
         }
     }
-
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<APIResponse>> UpdateCustomerProfile([FromBody] CustomerProfileDTO customerDto)
+    public async Task<ActionResult<APIResponse>> UpdateCompanyProfile([FromBody] CompanyProfileDTO companyDto)
     {
         try
         {
-            if (customerDto == null || customerDto.ApplicationUserId == 0)
+            if (companyDto == null || companyDto.ApplicationUserId == 0)
             {
                 return BadRequest(new APIResponse()
                 {
@@ -72,11 +70,11 @@ public class CustomerController : ControllerBase
                 });
             }
 
-            var customer = await _unitOfServices.Customers
-                .GetCustomerById(customerDto.ApplicationUserId);
+            var company = await _unitOfServices.Companies
+                .GetCompanyById(companyDto.ApplicationUserId);
             
-            _mapper.Map(customerDto, customer);
-            await _unitOfServices.Customers.UpdateCustomerUser(customer);
+            _mapper.Map(companyDto, company);
+            await _unitOfServices.Companies.UpdateCompanyUser(company);
             await _unitOfServices.SaveChangesAsync();
             return Ok(new APIResponse()
             {

@@ -56,16 +56,24 @@
                                     <i class="fas fa-user-circle me-1"></i> @User.Identity.Name
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    @if (User.IsInRole(SD.AdminRoleName))
-                                    {
-                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="AdminHome" asp-action="Index">Admin Dashboard</a></li>
-                                    }
-                                    @if (User.IsInRole(SD.CompanyRoleName))
-                                    {
-                                        <li><a class="dropdown-item" asp-area="Company" asp-controller="CompanyHome" asp-action="Index">Company Dashboard</a></li>
-                                        <li><a class="dropdown-item" asp-area="Company" asp-controller="Villa" asp-action="Index">Manage Villas</a></li>
-                                        <li><a class="dropdown-item" asp-area="Company" asp-controller="Booking" asp-action="Index">Manage Bookings</a></li>
-                                    }
+                                    @{
+                                        if (User.IsInRole(SD.AdminRoleName))
+                                        {
+                                            <li><a class="dropdown-item" asp-area="Admin" asp-controller="AdminHome" asp-action="Index">Admin Dashboard</a></li>
+                                        }
+                                        else if (User.IsInRole(SD.CompanyRoleName))
+                                        {
+                                            <li><a class="dropdown-item" asp-area="Company" asp-controller="CompanyHome" asp-action="Profile">My Profile</a></li>
+                                            <li><a class="dropdown-item" asp-area="Company" asp-controller="CompanyHome" asp-action="Index">Company Dashboard</a></li>
+                                            <li><a class="dropdown-item" asp-area="Company" asp-controller="Villa" asp-action="Index">Manage Villas</a></li>
+                                            <li><a class="dropdown-item" asp-area="Company" asp-controller="Booking" asp-action="Index">Manage Bookings</a></li>
+                                        }
+                                        else 
+                                        {
+                                            <li><a class="dropdown-item" asp-area="Customer" asp-controller="CustomerHome" asp-action="Profile">My Profile</a></li>
+                                        }
+                                    }           
+                                    <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" asp-area="Account" asp-controller="AccountHome" asp-action="Logout">Logout</a></li>
                                 </ul>
                             </li>

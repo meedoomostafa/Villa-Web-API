@@ -37,9 +37,11 @@ public class VillaController : Controller
         return View(list);
     }
 
+    [HttpGet]
     public async Task<IActionResult> Create()
     {
-        var idClaim = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var idClaim = User?
+            .FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (!int.TryParse(idClaim, out var currentUserId))
         {
             return Challenge(); 

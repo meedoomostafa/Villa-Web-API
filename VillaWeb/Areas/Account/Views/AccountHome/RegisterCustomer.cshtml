@@ -30,21 +30,13 @@
 
                         <!-- First Name & Last Name Row -->
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="FirstName" class="form-label fw-semibold">
-                                    <i class="fas fa-id-card me-1"></i>First Name
+                            <div class="mb-3">
+                                <label asp-for="FullName" class="form-label fw-semibold">
+                                    <i class="fas fa-id-card me-1"></i>Full Name
                                 </label>
-                                <input asp-for="FirstName" class="form-control form-control-lg"
-                                       placeholder="First name" autocomplete="given-name" />
-                                <span asp-validation-for="FirstName" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="LastName" class="form-label fw-semibold">
-                                    <i class="fas fa-id-card me-1"></i>Last Name
-                                </label>
-                                <input asp-for="LastName" class="form-control form-control-lg"
-                                       placeholder="Last name (optional)" autocomplete="family-name" />
-                                <span asp-validation-for="LastName" class="text-danger small"></span>
+                                <input asp-for="FullName" class="form-control form-control-lg"
+                                       placeholder="Enter your full name" autocomplete="name" />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
                             </div>
                         </div>
 
@@ -100,15 +92,6 @@
                             </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label asp-for="Role" class="control-label">Continue As:</label>
-                            <select asp-for="Role" class="form-control" asp-items="ViewBag.Roles">
-                                <option value="">select your role</option>
-                            </select>
-                            <span asp-validation-for="Role" class="text-danger"></span>
-                        </div>
-
-
                         
                         <!-- Address -->
                         <div class="mb-3">

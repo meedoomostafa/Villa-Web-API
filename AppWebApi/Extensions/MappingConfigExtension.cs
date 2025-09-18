@@ -10,6 +10,8 @@ public static class MappingConfigExtension
         services.AddAutoMapper(typeof(VillaMapping));
         services.AddAutoMapper(typeof(VillaNumberMapping));
         services.AddAutoMapper(typeof(BookingMapping));
+        services.AddAutoMapper(typeof(CustomerMapping));
+        services.AddAutoMapper(typeof(CompanyMapping));
         return services;
     }
 }

@@ -17,8 +17,4 @@
       <ProjectReference Include="..\AppWebApiUtilities\AppWebApiUtilities.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Models\DTOs\CompanyDTOs\" />
-    </ItemGroup>
-
 </Project>
