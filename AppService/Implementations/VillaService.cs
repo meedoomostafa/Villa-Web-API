@@ -19,6 +19,11 @@ public class VillaService : IVillaService
         return await _unitOfWork.Villa.GetAllAsync();
     }
 
+    public async Task<List<Villa>> GetAllCompanyVillas(int id)
+    {
+        return await _unitOfWork.Villa.GetAllAsync(v => v.CompanyId == id);
+    }
+
     public async Task<Villa> GetVillaWithVillaNumbers(int id)
     {
         return await _unitOfWork.Villa

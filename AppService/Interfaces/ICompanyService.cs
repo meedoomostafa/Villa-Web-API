@@ -1,4 +1,5 @@
 using AppModels.Models;
+using AppModels.Models.DTOs.CompanyDTOs;
 using AppModels.Models.DTOs.ProfilesDTOs;
 
 namespace AppService.Interfaces;
@@ -9,4 +10,5 @@ public interface ICompanyService
     Task CreateCompanyUser(Company company);
     Task UpdateCompanyUser(Company company);
     Task<Company> GetCompanyById(int id);
+    Task<CompanyDashboardDTO?> GetDashboardAsync(int companyUserId);
 }

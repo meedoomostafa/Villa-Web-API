@@ -1,5 +1,6 @@
 using AppService.Interfaces;
 using AppModels.Models;
+using AppModels.Models.DTOs.CompanyDTOs;
 using AppModels.Models.DTOs.ProfilesDTOs;
 using AppRepository.Repository.Interfaces;
 using AutoMapper;
@@ -43,5 +44,10 @@ public class CompanyService : ICompanyService
         if (company == null)
             return null;
         return company;
+    }
+
+    public async Task<CompanyDashboardDTO?> GetDashboardAsync(int companyUserId)
+    {
+        return await _unitOfWork.Company.GetDashboardAsync(companyUserId);
     }
 }

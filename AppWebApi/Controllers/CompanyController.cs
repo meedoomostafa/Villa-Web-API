@@ -21,7 +21,10 @@ public class CompanyController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet("{id:int}")]
+    [HttpGet("{id:int}/Profile")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<APIResponse>> CompanyProfile(int id)
     {
         try
@@ -86,6 +89,54 @@ public class CompanyController : ControllerBase
         {
             Console.WriteLine(e);
             throw;
+        }
+    }
+
+    [HttpGet("{id:int}/Dashboard")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<APIResponse>> Dashboard(int id)
+    {
+        try
+        {
+            if (id == 0)
+            {
+                return BadRequest(new APIResponse()
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ErrorMessages = new List<string>(){"Invalid Id"}
+                });
+            }
+            
+            var villas = await _unitOfServices.Companies
+                .GetDashboardAsync(id);
+            
+            if(villas == null)
+            {
+                return NotFound(new APIResponse()
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.NotFound,
+                    ErrorMessages = new List<string>(){"No Villas found"}
+                });
+            }
+
+            return Ok(new APIResponse()
+            {
+                StatusCode = HttpStatusCode.OK,
+                Result = villas
+            });
+        }
+        catch (Exception e)
+        {
+            return StatusCode((int)StatusCodes.Status500InternalServerError, new APIResponse()
+            {
+                IsSuccess = false,
+                StatusCode = HttpStatusCode.InternalServerError,
+                ErrorMessages = new List<string>() { e.Message }
+            });       
         }
     }
 }

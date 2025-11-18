@@ -21,7 +21,7 @@ public class CompanyService : BaseService, ICompanyService
         return await SendAsync<T>(new APIRequest()
         {
             ApiType = SD.ApiType.GET,
-            Url = $"{_baseUrl}{SD.VillaApiCompanyBase}/{userId}"
+            Url = $"{_baseUrl}{SD.VillaApiCompanyBase}/{userId}/Profile"
         });
     }
 
@@ -32,6 +32,15 @@ public class CompanyService : BaseService, ICompanyService
             ApiType = SD.ApiType.PUT,
             Data = dto,
             Url = $"{_baseUrl}{SD.VillaApiCompanyBase}"
+        });
+    }
+
+    public async Task<T> GetDashboardAsync<T>(int companyId) where T : APIResponse, new()
+    {
+        return await SendAsync<T>(new APIRequest()
+        {
+            ApiType = SD.ApiType.GET,
+            Url = $"{_baseUrl}{SD.VillaApiCompanyBase}/{companyId}/Dashboard"
         });
     }
 }
