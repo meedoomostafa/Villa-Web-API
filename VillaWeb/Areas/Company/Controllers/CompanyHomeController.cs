@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using VillaWeb.Models.DTOs.CompanyDTOs;
 using VillaWeb.Models.DTOs.ProfilesDTOs;
 using VillaWeb.Models.ResponseTypes;
 using VillaWeb.Service.IService;
@@ -24,7 +25,17 @@ public class CompanyHomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        return View();
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var response = await _unitOfServices.CompanyService.GetDashboardAsync<APIResponse>(userId);
+
+        if (response is { IsSuccess: true, Result: not null })
+        {
+            var dashboardDto = JsonConvert.DeserializeObject<CompanyDashboardDTO>(Convert.ToString(response.Result)!);
+            return View(dashboardDto);
+        }
+
+        TempData["ErrorMessage"] = "Could not retrieve dashboard data. Please try again later.";
+        return View(new CompanyDashboardDTO());
     }
 
     [HttpGet]

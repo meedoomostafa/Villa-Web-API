@@ -119,7 +119,8 @@ namespace VillaWeb.Areas.Account.Controllers
             if (ModelState.IsValid)
             {
                 ViewData["ReturnUrl"] = returnUrl;
-                var response = await _unitOfServices.AuthenticationService.LoginAsync<APIResponse>(login);
+                var response = await _unitOfServices.AuthenticationService
+                    .LoginAsync<APIResponse>(login);
                 if (response != null && response.IsSuccess && response.Result != null)
                 {
                     var loginResponse = JsonConvert.DeserializeObject<LoginResponse>(Convert.ToString(response.Result)!);

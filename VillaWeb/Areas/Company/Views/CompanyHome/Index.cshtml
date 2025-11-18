@@ -1,4 +1,108 @@
+@model CompanyDashboardDTO
+
 @{
-    ViewData["Title"] = "Company Area";
+    ViewData["Title"] = "Company Dashboard";
+    var totalVillas = Model.Villas?.Count ?? 0;
+    var allBookings = Model.Villas?.SelectMany(v => v.VillaNumbers).SelectMany(vn => vn.Bookings).ToList() ?? new List<BookingDashboardDTO>();
+    var totalBookings = allBookings.Count;
+    var totalRevenue = allBookings.Sum(b => b.TotalPrice);
+    var recentBookings = allBookings.OrderByDescending(b => b.StartDate).Take(5).ToList();
 }
-<h2>Welcome to the Company Area</h2>
+
+<div class="container mt-5">
+    <h1 class="mb-4">@Model.CompanyName Dashboard</h1>
+    <p class="lead">@Model.City, @Model.Country</p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Total Villas</div>
+                <div class="card-body">
+                    <h5 class="card-title">@totalVillas</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Total Bookings</div>
+                <div class="card-body">
+                    <h5 class="card-title">@totalBookings</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Total Revenue</div>
+                <div class="card-body">
+                    <h5 class="card-title">@totalRevenue.ToString("c")</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mt-5 mb-3">Recent Bookings</h2>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Villa Name</th>
+                <th>Customer</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Total Price</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (recentBookings.Any())
+            {
+                foreach (var booking in recentBookings)
+                {
+                    var villa = Model.Villas.FirstOrDefault(v => v.VillaNumbers.Any(vn => vn.Bookings.Any(b => b.BookingId == booking.BookingId)));
+                    <tr>
+                        <td>@(villa?.Name ?? "N/A")</td>
+                        <td>@(booking.Customer?.FullName ?? "N/A")</td>
+                        <td>@booking.StartDate.ToShortDateString()</td>
+                        <td>@booking.EndDate.ToShortDateString()</td>
+                        <td>@booking.TotalPrice.ToString("c")</td>
+                        <td>@booking.Status</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center">No recent bookings found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    
+    <h2 class="mt-5 mb-3">Your Villas</h2>
+    <div class="row">
+        @if (Model.Villas != null && Model.Villas.Any())
+        {
+            foreach (var villa in Model.Villas)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="@villa.ImageUrl" class="card-img-top" alt="@villa.Name">
+                        <div class="card-body">
+                            <h5 class="card-title">@villa.Name</h5>
+                            <p class="card-text">@villa.Details</p>
+                            <p class="card-text"><small class="text-muted">@villa.City</small></p>
+                            <p class="card-text"><strong>@villa.Price.ToString("c") / night</strong></p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col">
+                <p>You have no villas.</p>
+            </div>
+        }
+    </div>
+</div>

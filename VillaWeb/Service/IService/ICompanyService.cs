@@ -7,5 +7,6 @@ namespace VillaWeb.Service.IService
     {
         Task<T> GetCompanyAsync<T>(int companyId) where T : APIResponse, new();
         Task<T> UpdateCompanyAsync<T>(CompanyProfileDTO dto) where T : APIResponse, new();
+        Task<T> GetDashboardAsync<T>(int companyId) where T : APIResponse, new();
     }
 }
