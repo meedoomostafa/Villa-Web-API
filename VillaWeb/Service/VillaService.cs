@@ -24,6 +24,15 @@ public class VillaService : BaseService , IVillaService
 
     }
 
+    public Task<T> GetAllCompanyVillas<T>(int id) where T : APIResponse, new()
+    {
+        return SendAsync<T>(new APIRequest
+        {
+            ApiType = SD.ApiType.GET, Url = $"{_baseUrl}{SD.VillaApiBase}/{SD.GetAllCompanyVillasEndPoint}/{id}", Data = null 
+        });
+
+    }
+
     public Task<T> GetVillaWithVillaNumberAsync<T>(int id) where T : APIResponse, new()
     {
         return SendAsync<T>(new APIRequest()

@@ -43,7 +43,14 @@
                 <div class="collapse navbar-collapse" id="main-nav">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="Customer" asp-controller="CustomerHome" asp-action="Index">Home</a>
+                            @if (User.Identity.IsAuthenticated && User.IsInRole(SD.CompanyRoleName))
+                            {
+                                <a class="nav-link" asp-area="Company" asp-controller="CompanyHome" asp-action="Index">Home</a>
+                            }
+                            else
+                            {
+                                <a class="nav-link" asp-area="Customer" asp-controller="CustomerHome" asp-action="Index">Home</a>
+                            }
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="Customer" asp-controller="CustomerHome" asp-action="Privacy">Privacy</a>
@@ -64,7 +71,6 @@
                                         else if (User.IsInRole(SD.CompanyRoleName))
                                         {
                                             <li><a class="dropdown-item" asp-area="Company" asp-controller="CompanyHome" asp-action="Profile">My Profile</a></li>
-                                            <li><a class="dropdown-item" asp-area="Company" asp-controller="CompanyHome" asp-action="Index">Company Dashboard</a></li>
                                             <li><a class="dropdown-item" asp-area="Company" asp-controller="Villa" asp-action="Index">Manage Villas</a></li>
                                             <li><a class="dropdown-item" asp-area="Company" asp-controller="Booking" asp-action="Index">Manage Bookings</a></li>
                                         }
@@ -80,8 +86,18 @@
                         }
                         else
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Account" asp-controller="AccountHome" asp-action="RegisterCustomer">Register</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="registerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-plus me-1"></i>Register
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="registerDropdown">
+                                    <li><a class="dropdown-item" asp-area="Account" asp-controller="AccountHome" asp-action="RegisterCustomer">
+                                        <i class="fas fa-user me-2"></i>Register as Customer
+                                    </a></li>
+                                    <li><a class="dropdown-item" asp-area="Account" asp-controller="AccountHome" asp-action="RegisterCompany">
+                                        <i class="fas fa-building me-2"></i>Register as Company
+                                    </a></li>
+                                </ul>
                             </li>
                             <li class="nav-item">
                                 <a class="btn btn-primary" asp-area="Account" asp-controller="AccountHome" asp-action="Login">Login</a>

@@ -29,7 +29,8 @@ public class VillaController : Controller
     public async Task<IActionResult> Index()
     {
         List<VillaDTO> list = new List<VillaDTO>();
-        var response = await _unitOfServices.VillaService.GetAllAsync<APIResponse>();
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var response = await _unitOfServices.VillaService.GetAllCompanyVillas<APIResponse>(userId);
         if (response != null && response.IsSuccess)
         {
             list = JsonConvert.DeserializeObject<List<VillaDTO>>(Convert.ToString(response.Result));

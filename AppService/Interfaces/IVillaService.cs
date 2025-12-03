@@ -5,6 +5,7 @@ namespace AppService.Interfaces;
 public interface IVillaService
 {
     Task<List<Villa>> GetAllVillas();
+    Task<List<Villa>> GetAllCompanyVillas(int id);
     Task<Villa> GetVillaWithVillaNumbers(int id);
     Task<Villa> GetVilla(int id , bool tracked = true);
     Task<Villa> CheckVillaNameExistence(string name);

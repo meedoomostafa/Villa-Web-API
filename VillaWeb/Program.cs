@@ -68,6 +68,24 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Middleware to redirect company users to their dashboard on home page
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path.Value;
+    
+    // Only apply this logic to the root path
+    if (path == "/" || path == "")
+    {
+        if (context.User?.Identity?.IsAuthenticated == true && context.User.IsInRole("Company"))
+        {
+            context.Response.Redirect("/Company/CompanyHome/Index");
+            return;
+        }
+    }
+    
+    await next();
+});
+
 app.MapStaticAssets();
 
 app.MapControllerRoute(

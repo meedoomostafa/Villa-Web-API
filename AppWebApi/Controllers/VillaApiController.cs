@@ -55,6 +55,36 @@ public class VillaApiController : ControllerBase
         }
         return StatusCode((int)HttpStatusCode.InternalServerError,_response);
     }
+
+    [HttpGet("GetAllCompanyVillas/{id:int}")]
+    [ResponseCache(CacheProfileName = "30s")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<APIResponse>> GetAllCompanyVillas(int id)
+    {
+        try
+        {
+            List<Villa> villas = await _unitOfServices.Villas.GetAllCompanyVillas(id);
+            if (villas == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add("No Villas found");
+                return NotFound(_response);
+            }
+            _response.Result = _mapper.Map<List<VillaDTO>>(villas);
+            _response.StatusCode = HttpStatusCode.OK;
+            return Ok(_response);
+        }
+        catch (Exception e)
+        {
+            _response.IsSuccess = false;
+            _response.ErrorMessages.Add(e.Message);
+            _response.StatusCode = HttpStatusCode.InternalServerError;
+        }
+        return StatusCode((int)HttpStatusCode.InternalServerError,_response);
+    }
     
     [AllowAnonymous]
     [HttpGet("GetVillaWithVillaNumbers/{id:int}")]

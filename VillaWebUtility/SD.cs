@@ -18,6 +18,7 @@ public static class SD
         
     
     public static string GetVillaWithVillaNumbersEndPoint = "GetVillaWithVillaNumbers";
+    public static string GetAllCompanyVillasEndPoint = "GetAllCompanyVillas";
     
     public static string AccessTokenKey = "access_token";
     public static string RefreshTokenKey = "refresh_token";
